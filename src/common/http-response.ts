@@ -176,7 +176,7 @@ export default new class HttpResponse {
 
 
     build = (req: Request, res: Response, next: NextFunction) => {
-        this.entity = req.path.split("/").filter(path => path !== "")[0].toUpperCase();
+        this.entity = (req.path.split("/").filter(path => path !== "")[0] || "ROOT").toUpperCase();
         this.response = res;
         next();
     }
