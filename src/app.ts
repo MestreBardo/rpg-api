@@ -1,3 +1,4 @@
+import { NotImplementedRoutes } from './routes/notImplemented.routes';
 import {
     UsersRoutes
 } from './routes/users.routes';
@@ -7,16 +8,18 @@ import throng from 'throng'
 import helmet from 'helmet'
 import AppConfig from './common/app.config';
 import DatabaseConfig from './common/database.config';
+import httpResponse from './common/http-response';
+import { AuthRoutes } from './routes/auth.routes';
+import { Console } from 'node:console';
 
 
-const port = 4000;
+const port = +`${process.env.PORT}` || 4000;
 
 
 const WORKERS = process.env.WEB_CONCURRENCY || 1
-const DB_USER = process.env.DB_USER || "LittleMonkey"
-const DB_PASS = process.env.DB_PASS || "vnWLM50pPApn4Jmw"
-const DB_BASE = process.env.DB_BASE || "rollmaster"
-
+const DB_USER = `${process.env.DB_USER}`
+const DB_PASS = `${process.env.DB_PASS}`
+const DB_BASE = `${process.env.DB_BASE}`
 
 const start = async (id: number) => {
     try {
@@ -27,12 +30,15 @@ const start = async (id: number) => {
                 DB_PASS,
                 DB_BASE
             ));
-        
         await app
         .addMiddleware(bodyParser.json())
         .addMiddleware(cors())
         .addMiddleware(helmet())
-        .addRoute(new UsersRoutes()).init();
+        .addMiddleware(httpResponse.build)
+        .addRoute(new UsersRoutes())
+        .addRoute(new AuthRoutes())
+        .addRoute(new NotImplementedRoutes())
+        .init();
 
     } catch (error) {
         console.error(error);

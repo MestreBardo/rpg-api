@@ -1,16 +1,16 @@
 import {CommonRoutesConfig} from '../common/common.routes.config';
-import {Router, Response, Request} from 'express';
-import { getUsers } from '../controllers/users.controller';
+import {Router, Request,Response} from 'express';
+import httpResponse from '../common/http-response';
 
 export class UsersRoutes extends CommonRoutesConfig {
     constructor() {
         super('users', Router());
         
     }
-    initRoutes() {
+    initRoutes(): Router {
         this.router.route('')
         .get((req: Request, res: Response) => {
-            res.sendStatus(405);
+            httpResponse.ok("teste");
         })
         .post((req: Request, res: Response) => {
             res.sendStatus(405);
@@ -27,7 +27,7 @@ export class UsersRoutes extends CommonRoutesConfig {
 
         this.router.route('/:id')
         .get((req: Request, res: Response) => {
-            res.sendStatus(200);
+            // httpResponse.ok("message");
         })
         .post((req: Request, res: Response) => {
             res.sendStatus(405);

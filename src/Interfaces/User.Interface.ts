@@ -1,6 +1,10 @@
-import { Document, Model } from "mongoose";
+import {
+    Document,
+    Model
+} from "mongoose";
 
 export interface UserInterface extends Document {
+    _id: string
     name: string;
     surname: string;
     username: string;
@@ -14,9 +18,12 @@ export interface UserInterface extends Document {
     registeredOn: Date;
     lastModifiedOn: number;
 
+    checkPassword(password: string): boolean;
+    generateToken(): string;
+    validateData(): Promise<string[]>;
+    encryptPassword(): Promise<void>;
 }
 
-export interface IUserModel extends Model<UserInterface> {
-    getByEmailOrUsername(name: string): Promise<Array<UserInterface>>
-    tester(): string;
+export interface UserModelInterface extends Model<UserInterface> {
+    getByEmailOrUsername(username: string, email: string): Promise<UserInterface>
 }
