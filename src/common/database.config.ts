@@ -11,7 +11,8 @@ export default class DatabaseConfig {
         return mongoose.connect(
             this.connectionString, {
                 useNewUrlParser: true,
-                useUnifiedTopology: true
+                useUnifiedTopology: true,
+                useFindAndModify: false
             }
         )
     }

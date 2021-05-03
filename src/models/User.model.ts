@@ -79,12 +79,28 @@ UserSchema.statics.getByEmailOrUsername = async function (email: string, usernam
     });
 }
 
+UserSchema.statics.getByTextToSearch = async function (text: string, page: number) {
+    const textToSearch = new RegExp(text, "i")
+    return await this.find({
+        $or: [{
+            email: textToSearch,
+        }, {
+            username: textToSearch
+        }]
+        
+        
+    })
+    .select('-password -registeredOn -lastModifiedOn -__v')
+    .skip((page - 1) * 20)
+    .limit(20);
+}
+
 UserSchema.methods.checkPassword = async function (password: string) {
     return compare(password, this.password);
 }
 
-UserSchema.methods.encryptPassword = async function () {
-    this.password = await hash(this.password, +`${process.env.SALT}`);
+UserSchema.methods.encryptPassword = async function (newPassword = null) {
+    this.password = await hash(newPassword ?? this.password, +`${process.env.SALT}`);
 }
 
 UserSchema.methods.validateData = async function () {

@@ -1,46 +1,53 @@
-import {CommonRoutesConfig} from '../common/common.routes.config';
-import {Router, Request,Response} from 'express';
-import httpResponse from '../common/http-response';
+import {
+    CommonRoutesConfig
+} from '../common/common.routes.config';
+import {
+    Router,
+    Request,
+    Response
+} from 'express';
+import {
+    methodNotAllowed
+} from '../controllers/common.controller';
+import {
+    getUser,
+    getUsers,
+    patchUserPassword,
+    patchUserEmail,
+    patchUserUsername,
+    inactiveUser
+} from '../controllers/users.controller';
 
 export class UsersRoutes extends CommonRoutesConfig {
     constructor() {
         super('users', Router());
-        
+
     }
     initRoutes(): Router {
         this.router.route('')
-        .get((req: Request, res: Response) => {
-            httpResponse.ok("teste");
-        })
-        .post((req: Request, res: Response) => {
-            res.sendStatus(405);
-        })
-        .patch((req: Request, res: Response) => {
-            res.sendStatus(500);
-        })
-        .put((req: Request, res: Response) => {
-            res.sendStatus(306);
-        })
-        .delete((req: Request, res: Response) => {
-            res.sendStatus(304);
-        })
+            .get(getUsers)
+            .all(methodNotAllowed)
 
         this.router.route('/:id')
-        .get((req: Request, res: Response) => {
-            // httpResponse.ok("message");
-        })
-        .post((req: Request, res: Response) => {
-            res.sendStatus(405);
-        })
-        .patch((req: Request, res: Response) => {
-            res.sendStatus(500);
-        })
-        .put((req: Request, res: Response) => {
-            res.sendStatus(306);
-        })
-        .delete((req: Request, res: Response) => {
-            res.sendStatus(304);
-        })
+            .get(getUser)
+            .delete(inactiveUser)
+            .all(methodNotAllowed)
+
+        this.router.route('/:id/password')
+            .patch(patchUserPassword)
+            .all(methodNotAllowed)
+
+        this.router.route('/:id/email')
+            .patch(patchUserEmail)
+            .all(methodNotAllowed)
+
+        this.router.route('/:id/username')
+            .patch(patchUserUsername)
+            .all(methodNotAllowed)
+
+
+        this.router.route('*')
+            .all(methodNotAllowed)
 
         return this.router;
     }

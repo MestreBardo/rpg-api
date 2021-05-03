@@ -20,10 +20,11 @@ export interface UserInterface extends Document {
 
     checkPassword(password: string): boolean;
     generateToken(): string;
-    validateData(): Promise<string[]>;
-    encryptPassword(): Promise<void>;
+    validateData(): Promise < string[] > ;
+    encryptPassword(newPassword ? : string): Promise < void > ;
 }
 
-export interface UserModelInterface extends Model<UserInterface> {
-    getByEmailOrUsername(username: string, email: string): Promise<UserInterface>
+export interface UserModelInterface extends Model < UserInterface > {
+    getByEmailOrUsername(username: string, email: string): Promise < UserInterface >
+        getByTextToSearch(textToSearch: string, page: number): Promise < UserInterface[] >
 }

@@ -10,7 +10,6 @@ import AppConfig from './common/app.config';
 import DatabaseConfig from './common/database.config';
 import httpResponse from './common/http-response';
 import { AuthRoutes } from './routes/auth.routes';
-import {static as staticFiles} from 'express';
 
 
 const port = +`${process.env.PORT}` || 4000;
@@ -32,9 +31,11 @@ const start = async (id: number) => {
             ));
         await app
         .addMiddleware(bodyParser.json())
-        .addMiddleware(cors())
+        .addMiddleware(cors({exposedHeaders: ['Accept-Language',
+        'Access-Control-Allow-Origin',
+       'Connection', 'Content-Length', 'Content-Type', 'Date',
+        'Etag', 'Server', 'Via', 'X-Powered-By']}))
         .addMiddleware(helmet())
-        .addMiddleware(staticFiles("public"))
         .addMiddleware(httpResponse.build)
         .addRoute(new UsersRoutes())
         .addRoute(new AuthRoutes())

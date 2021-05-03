@@ -1,10 +1,11 @@
 import {
     Response,
     Request,
-    NextFunction
+    NextFunction,
 } from 'express';
 
-export default new class HttpResponse {
+
+export default new class HttpResponse{
     private response!: Response;
     private entity: string = "";
     private HTTP_OK = 200;
