@@ -10,7 +10,7 @@ import AppConfig from './common/app.config';
 import DatabaseConfig from './common/database.config';
 import httpResponse from './common/http-response';
 import { AuthRoutes } from './routes/auth.routes';
-import { Console } from 'node:console';
+import {static as staticFiles} from 'express';
 
 
 const port = +`${process.env.PORT}` || 4000;
@@ -34,6 +34,7 @@ const start = async (id: number) => {
         .addMiddleware(bodyParser.json())
         .addMiddleware(cors())
         .addMiddleware(helmet())
+        .addMiddleware(staticFiles("public"))
         .addMiddleware(httpResponse.build)
         .addRoute(new UsersRoutes())
         .addRoute(new AuthRoutes())
