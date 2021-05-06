@@ -13,7 +13,8 @@ import {
     patchUserPassword,
     patchUserEmail,
     patchUserUsername,
-    inactiveUser
+    inactiveUser,
+    getUserGroups
 } from '../components/users/user.controller';
 import {
     checkTokenValidity,
@@ -67,6 +68,14 @@ export class UsersRoutes extends CommonRoutesConfig {
             .post(methodNotAllowed)
             .put(methodNotAllowed)
             .patch(patchUserUsername)
+            .delete(methodNotAllowed)
+
+        this.router.route('/:id/groups')
+            .all(checkTokenValidity)
+            .get(getUserGroups)
+            .post(methodNotAllowed)
+            .put(methodNotAllowed)
+            .patch(methodNotAllowed)
             .delete(methodNotAllowed)
 
 

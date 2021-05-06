@@ -4,10 +4,10 @@ import {
 import httpResponse from "../../services/httpResponse.service";
 import { compareEncryptString, generateToken, encryptString } from "../../services/helper.service";
 import UserModel from "./user.model";
-import RequestWithUserInterface from "../../interfaces/requestWithUser.interface";
+import MemberModel from "../member/member.model";
 
 
-const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
     try {
         const user = await UserModel.getByEmailOrUsername(req.body.login, req.body.login);
 
@@ -40,7 +40,7 @@ const login = async (req: Request, res: Response) => {
 
 };
 
-const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response) => {
     try {
 
         const user = new UserModel(req.body)
@@ -77,7 +77,7 @@ const register = async (req: Request, res: Response) => {
 
 };
 
-const getUser = async (req: Request, res: Response) => {
+export const getUser = async (req: Request, res: Response) => {
     try {
         const id: string = req.params.id;
         const user = await UserModel.findById(id).select("-password -__v -lastModifiedOn");
@@ -92,7 +92,7 @@ const getUser = async (req: Request, res: Response) => {
     }
 }
 
-const getUsers = async (req: Request, res: Response) => {
+export const getUsers = async (req: Request, res: Response) => {
     try {
         const textToSearch = req.query.textToSearch ? `${req.query.textToSearch}` : "";
         const page = req.query.page ? +`${req.query.page}` : 1;
@@ -106,7 +106,7 @@ const getUsers = async (req: Request, res: Response) => {
     }
 }
 
-const patchUserPassword = async (req: RequestWithUserInterface, res: Response) => {
+export const patchUserPassword = async (req: Request, res: Response) => {
     try {
 
         if (!req.body.password) {
@@ -132,7 +132,7 @@ const patchUserPassword = async (req: RequestWithUserInterface, res: Response) =
     }
 }
 
-const patchUserEmail = async (req: Request, res: Response) => {
+export const patchUserEmail = async (req: Request, res: Response) => {
     try {
 
         if (!req.body.email) {
@@ -162,7 +162,7 @@ const patchUserEmail = async (req: Request, res: Response) => {
     }
 }
 
-const patchUserUsername = async (req: Request, res: Response) => {
+export const patchUserUsername = async (req: Request, res: Response) => {
     try {
         if (!req.body.username) {
             return httpResponse.unprocessableEntity(res, ["New username is not defined in body"]);
@@ -191,7 +191,7 @@ const patchUserUsername = async (req: Request, res: Response) => {
     }
 }
 
-const inactiveUser = async (req: Request, res: Response) => {
+export const inactiveUser = async (req: Request, res: Response) => {
     try {
         
         const user = await UserModel.findById(req.params.id).select('-password -__v -registeredOn');
@@ -215,14 +215,26 @@ const inactiveUser = async (req: Request, res: Response) => {
     }
 }
 
+export const getUserGroups = async (req: Request, res: Response) => {
+    try {
+        const page = (+req.query.page || 1) - 1;
+        const groups = await MemberModel
+            .find({userId: req.params.id})
+            .skip(page * 20)
+            .limit(20)
+            .select('-__v -email -username -userId -_id')
+        
+        if (!groups.length) {
+            return httpResponse.notFound(res, ["No group found for this user"]);
+        }
+        const count = (await UserModel.findById(req.params.id).select("groupCount")).groupCount;
+        return httpResponse.ok(res, {
+            count, groups
+        });
+    } catch (error) {
+        return httpResponse.internalServerError(res, [error.message]);
+    }
+   
 
-export {
-    login,
-    register,
-    getUsers,
-    getUser,
-    patchUserPassword,
-    patchUserEmail,
-    patchUserUsername,
-    inactiveUser
+    
 }

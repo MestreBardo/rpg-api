@@ -3,8 +3,7 @@ import mongoose, {
 } from "mongoose";
 
 
-import UserModelInterface from "../../interfaces/user.model.interface"
-import UserDocumentInterface from "../../interfaces/user.document.interface"
+import {UserDocumentInterface, UserModelInterface} from "../../interfaces/user.interface"
 
 
 const UserSchema = new Schema <UserDocumentInterface, UserModelInterface> ({
@@ -58,6 +57,10 @@ const UserSchema = new Schema <UserDocumentInterface, UserModelInterface> ({
         lastModifiedOn: {
             type: Number,
             default: new Date().getTime()
+        },
+        groupCount: {
+            type: Number,
+            default: 0
         }
     })
 

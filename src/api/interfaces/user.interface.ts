@@ -3,7 +3,7 @@ import {
     Model
 } from "mongoose";
 
-export default interface UserDocumentInterface extends Document {
+export interface UserDocumentInterface extends Document {
     _id: string
     name: string;
     surname: string;
@@ -17,6 +17,13 @@ export default interface UserDocumentInterface extends Document {
     city: string;
     registeredOn: Date;
     lastModifiedOn: number;
+    groupCount: number;
 
     validateData(): Promise <string[]>;
+}
+
+
+export interface UserModelInterface extends Model<UserDocumentInterface> {
+    getByEmailOrUsername(username: string, email: string): Promise<UserDocumentInterface>
+    getByTextToSearch(textToSearch: string, page: number): Promise<UserDocumentInterface[]>
 }

@@ -9,6 +9,7 @@ import AppConfig from './config/app.config';
 import DatabaseConfig from './config/database.config';
 import { AuthRoutes } from './api/routes/auth.routes';
 import { DefaultRoutes } from './api/routes/default.routes';
+import { GroupRoutes } from './api/routes/group.routes';
 
 
 const port = +`${process.env.PORT}` || 4000;
@@ -35,8 +36,9 @@ const start = async (id: number) => {
        'Connection', 'Content-Length', 'Content-Type', 'Date',
         'Etag', 'Server', 'Via', 'X-Powered-By']}))
         .addMiddleware(helmet())
-        .addRoute(new UsersRoutes())
         .addRoute(new AuthRoutes())
+        .addRoute(new UsersRoutes())
+        .addRoute(new GroupRoutes())
         .addRoute(new DefaultRoutes())
         .init();
 
