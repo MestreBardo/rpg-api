@@ -1,21 +1,13 @@
 import mongoose, {
     Schema,
 } from "mongoose";
-import {
-    compare, hash
-} from "bcrypt"
-import {
-    sign
-} from "jsonwebtoken";
-
-import {
-    UserInterface,
-    UserModelInterface
-} from "../Interfaces/User.Interface";
 
 
-const UserSchema = new Schema < UserInterface,
-    UserModelInterface > ({
+import UserModelInterface from "../../interfaces/user.model.interface"
+import UserDocumentInterface from "../../interfaces/user.document.interface"
+
+
+const UserSchema = new Schema <UserDocumentInterface, UserModelInterface> ({
         _id: {
             type: mongoose.Types.ObjectId,
             default: new mongoose.mongo.ObjectId()
@@ -95,14 +87,6 @@ UserSchema.statics.getByTextToSearch = async function (text: string, page: numbe
     .limit(20);
 }
 
-UserSchema.methods.checkPassword = async function (password: string) {
-    return compare(password, this.password);
-}
-
-UserSchema.methods.encryptPassword = async function (newPassword = null) {
-    this.password = await hash(newPassword ?? this.password, +`${process.env.SALT}`);
-}
-
 UserSchema.methods.validateData = async function () {
     try {
         await this.validate();
@@ -136,23 +120,6 @@ UserSchema.methods.validateData = async function () {
 
         return errors;
     }
-}
-
-UserSchema.methods.generateToken = function () {
-    return `Bearer ${sign({
-            _id: this._id,
-            username: this.username,
-            name: this.name,
-            surname: this.surname,
-            email: this.email,
-            country: this.country,
-            gender: this.gender,
-            city: this.city
-        },
-        `${process.env.SALT}`, {
-            expiresIn: '1h'
-        }
-    )}`
 }
 
 export default mongoose.model('User', UserSchema);

@@ -1,15 +1,14 @@
-import { NotImplementedRoutes } from './routes/notImplemented.routes';
 import {
     UsersRoutes
-} from './routes/users.routes';
+} from './api/routes/user.routes';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import throng from 'throng'
 import helmet from 'helmet'
-import AppConfig from './common/app.config';
-import DatabaseConfig from './common/database.config';
-import httpResponse from './common/http-response';
-import { AuthRoutes } from './routes/auth.routes';
+import AppConfig from './config/app.config';
+import DatabaseConfig from './config/database.config';
+import { AuthRoutes } from './api/routes/auth.routes';
+import { DefaultRoutes } from './api/routes/default.routes';
 
 
 const port = +`${process.env.PORT}` || 4000;
@@ -36,10 +35,9 @@ const start = async (id: number) => {
        'Connection', 'Content-Length', 'Content-Type', 'Date',
         'Etag', 'Server', 'Via', 'X-Powered-By']}))
         .addMiddleware(helmet())
-        .addMiddleware(httpResponse.build)
         .addRoute(new UsersRoutes())
         .addRoute(new AuthRoutes())
-        .addRoute(new NotImplementedRoutes())
+        .addRoute(new DefaultRoutes())
         .init();
 
     } catch (error) {
@@ -48,9 +46,10 @@ const start = async (id: number) => {
 
 }
 
+start(4);
 
-throng({
-    workers: WORKERS,
-    lifetime: Infinity,
-    start
-})
+// throng({
+//     workers: WORKERS,
+//     lifetime: Infinity,
+//     start
+// })

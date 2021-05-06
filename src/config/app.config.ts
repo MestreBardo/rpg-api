@@ -1,5 +1,5 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
-import { CommonRoutesConfig } from './common.routes.config';
+import { CommonRoutesConfig } from '../api/common/common.routes.config';
 import DatabaseConfig from './database.config';
 
 export default class AppConfig {
