@@ -31,6 +31,10 @@ const GroupSchema = new Schema<GroupDocumentInterface, GroupModelInterface>({
         type: Date,
         default: Date.now
     },
+    isPublic: {
+        type: Boolean,
+        default: true
+    },
     lastModifiedOn: {
         type: Number,
         default: new Date().getTime()

@@ -11,6 +11,7 @@ export interface GroupDocumentInterface extends Document {
     createdOn: Date;
     lastModifiedOn: number;
     userCount: number;
+    isPublic: boolean;
 
     validateData(): Promise <string[]>;
 }
