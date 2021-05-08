@@ -1,5 +1,7 @@
-export default class ServiceResponse<T = string[]> {
-    constructor(public error: string, public payload: T) {
+import ErrorResponse from "./errorResponse";
+
+export default class ServiceResponse<T> {
+    constructor(public error: ErrorResponse = null, public payload: T = null) {
 
     }
 }

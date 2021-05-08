@@ -23,10 +23,10 @@ import {
 
 export const postGroup = async (req: RequestWithUserInterface, res: Response) => {
     try {
-        const group = await createGroup(<GroupDocumentInterface>req.body);
+        const group = await createGroup(req.body);
 
         if (group.error)
-            return httpResponse[group.error](group.payload);
+            return httpResponse[group.error.status](group.error.messages);
 
         await createMember(<UserDocumentInterface>req.user, <GroupDocumentInterface>group.payload, "admin")
 
