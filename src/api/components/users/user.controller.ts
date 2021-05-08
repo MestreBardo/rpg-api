@@ -234,7 +234,5 @@ export const getUserGroups = async (req: Request, res: Response) => {
     } catch (error) {
         return httpResponse.internalServerError(res, [error.message]);
     }
-   
 
-    
 }

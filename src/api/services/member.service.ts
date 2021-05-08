@@ -8,9 +8,8 @@ import {
     UserDocumentInterface
 } from "../interfaces/user.interface";
 import MemberModel from '../components/member/member.model';
-import ServiceResponse from '../common/serviceResponse';
 
-export const createMember = async (user: UserDocumentInterface, group: GroupDocumentInterface, role: string): Promise <ServiceResponse<MemberDocumentInterface>> => {
+export const createMember = async (user: UserDocumentInterface, group: GroupDocumentInterface, role: string): Promise<MemberDocumentInterface> => {
     const member = new MemberModel({
         userId: user._id,
         username: user.username,
@@ -22,5 +21,5 @@ export const createMember = async (user: UserDocumentInterface, group: GroupDocu
 
     await member.save();
 
-    return new ServiceResponse < MemberDocumentInterface > (null, member)
+    return member;
 }

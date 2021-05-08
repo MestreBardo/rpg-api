@@ -5,5 +5,5 @@ export const addUserToGroup = async (id: string): Promise<void> => {
         $inc: {
             groupCount: 1
         }
-    });
+    }, {new: true});
 }
