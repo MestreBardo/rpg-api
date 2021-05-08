@@ -1,11 +1,13 @@
+import { UserDocumentInterface } from './../interfaces/user.interface';
 import ErrorWithMessages from '../common/errorWithMessages';
 import GroupModel from '../components/groups/group.model';
 import MemberModel from '../components/member/member.model';
+import { UserModelInterface } from '../interfaces/user.interface';
 import { GroupDocumentInterface } from './../interfaces/group.interface';
 
 
-export const createValidGroup = async (value: any): Promise<GroupDocumentInterface> => {
-    const group = new GroupModel(value);
+export const createValidGroup = async (value: any, user: UserDocumentInterface): Promise<GroupDocumentInterface> => {
+    const group = new GroupModel({ownerUsername: user.username, ownerId: user._id,...value});
     const errors = await group.validateData();
 
     if (errors.length) 

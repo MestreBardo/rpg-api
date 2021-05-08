@@ -24,10 +24,10 @@ import { createValidGroup } from '../../services/group.service';
 
 export const postGroup = async (req: RequestWithUserInterface, res: Response) => {
     try {
-        const group = await createValidGroup(req.body);
+        const group = await createValidGroup(req.body, req.user);
         await checkGroupUniqueness(group.name);
         await saveGroup(group);
-        await createMember(<UserDocumentInterface>req.user, group, "admin")
+        await createMember(req.user, group, "admin")
         await addUserToGroup(req.user._id);
         return httpResponse.created(res, group)
 
