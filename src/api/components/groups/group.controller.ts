@@ -1,24 +1,15 @@
 import { checkGroupUniqueness, groupUsers, groupUsersCount, saveGroup } from './../../services/group.service';
 import { addUserToGroup } from './../../services/user.service';
 import {
-    GroupDocumentInterface
-} from './../../interfaces/group.interface';
-import {
     Request,
     Response
 } from "express";
 import RequestWithUserInterface from "../../interfaces/requestWithUser.interface";
 
 import httpResponse from "../../services/httpResponse.service";
-import MemberModel from "../member/member.model";
-import UserModel from "../users/user.model";
-import GroupModel from "./group.model";
 import {
     createMember
 } from '../../services/member.service';
-import {
-    UserDocumentInterface
-} from '../../interfaces/user.interface';
 import ErrorWithMessages from '../../common/errorWithMessages';
 import { createValidGroup } from '../../services/group.service';
 

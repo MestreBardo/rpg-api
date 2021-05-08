@@ -17,6 +17,10 @@ const MemberSchema = new Schema<MemberDocumentInterface, MemberModelInterface>({
         type: mongoose.Types.ObjectId,
         required: true
     },
+    groupLogo: {
+        type: String,
+        required: true,
+    },
     username: {
         type: String,
         required: true

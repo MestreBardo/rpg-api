@@ -16,6 +16,7 @@ export const createMember = async (user: UserDocumentInterface, group: GroupDocu
         email: user.email,
         groupId: group._id,
         groupName: group.name,
+        groupLogo: group.logo,
         role
     })
 
