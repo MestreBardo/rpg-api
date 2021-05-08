@@ -13,6 +13,14 @@ const GroupSchema = new Schema<GroupDocumentInterface, GroupModelInterface>({
         type: mongoose.Types.ObjectId,
         default: new mongoose.mongo.ObjectId()
     },
+    ownerId: {
+        type: mongoose.Types.ObjectId,
+        required: [true, "Owner id is required"]
+    },
+    ownerUsername: {
+        type: String,
+        required: [true, "Owner is required"]
+    },
     name: {
         type: String,
         required: [true, "Name is required"]
