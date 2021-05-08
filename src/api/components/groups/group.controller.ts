@@ -1,4 +1,4 @@
-import { checkGroupUniqueness, groupUsers, groupUsersCount, saveGroup } from './../../services/group.service';
+import { checkGroupUniqueness, groupUsers, groupUsersCount, recoverGroup, saveGroup } from './../../services/group.service';
 import { addUserToGroup } from './../../services/user.service';
 import {
     Request,
@@ -29,7 +29,18 @@ export const postGroup = async (req: RequestWithUserInterface, res: Response) =>
         return httpResponse.internalServerError(res, [error.message])
     }
 
+}
 
+export const getGroup = async (req: Request, res: Response) => {
+    try {
+        const group = await recoverGroup(req.params.id);
+        return httpResponse.created(res, group)
+    } catch (error) {
+        if(error instanceof ErrorWithMessages)
+            return httpResponse[error.status](res, [error.messages]);
+
+        return httpResponse.internalServerError(res, [error.message])
+    }
 }
 
 export const getGroupUsers = async (req: Request, res: Response) => {

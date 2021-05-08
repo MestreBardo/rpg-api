@@ -1,8 +1,8 @@
+import { MemberDocumentInterface } from './../interfaces/member.interface';
 import { UserDocumentInterface } from './../interfaces/user.interface';
 import ErrorWithMessages from '../common/errorWithMessages';
 import GroupModel from '../components/groups/group.model';
 import MemberModel from '../components/member/member.model';
-import { UserModelInterface } from '../interfaces/user.interface';
 import { GroupDocumentInterface } from './../interfaces/group.interface';
 
 
@@ -26,7 +26,7 @@ export const saveGroup = async (group: GroupDocumentInterface) => {
     await group.save();
 }
 
-export const groupUsers = async (id: string, page: string = null) => {
+export const groupUsers = async (id: string, page: string = null): Promise<MemberDocumentInterface[]> => {
     const pageQuery = (+page || 1) - 1;
     const users = await MemberModel
         .find({
@@ -41,6 +41,15 @@ export const groupUsers = async (id: string, page: string = null) => {
 
     return users;
     
+}
+
+export const recoverGroup = async (id: string) => {
+    const group = await GroupModel.findById(id).select("-lastModifiedOn -userCount");
+    if (!group) 
+        throw new ErrorWithMessages("notFound", ["This group not exist"]);
+    
+    return group;
+
 }
 
 export const groupUsersCount = async (id: string) => {
