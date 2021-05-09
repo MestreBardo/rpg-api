@@ -55,7 +55,7 @@ export const recoverGroup = async (id: string) => {
 export const groupUsersCount = async (id: string) => {
     const count = (await GroupModel.findById(id).select("userCount")).userCount;
 
-    if (count) 
+    if (!count) 
         throw new ErrorWithMessages("notFound", ["No Users found for this group"]);
 
     return count;

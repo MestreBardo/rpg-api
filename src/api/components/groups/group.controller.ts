@@ -37,7 +37,7 @@ export const getGroup = async (req: Request, res: Response) => {
         return httpResponse.created(res, group)
     } catch (error) {
         if(error instanceof ErrorWithMessages)
-            return httpResponse[error.status](res, [error.messages]);
+            return httpResponse[error.status](res, error.messages);
 
         return httpResponse.internalServerError(res, [error.message])
     }
@@ -56,7 +56,7 @@ export const getGroupUsers = async (req: Request, res: Response) => {
         })
     } catch (error) {
         if(error instanceof ErrorWithMessages)
-            return httpResponse[error.status](res, [error.messages]);
+            return httpResponse[error.status](res, error.messages);
 
         return httpResponse.internalServerError(res, [error.message])
     }

@@ -1,3 +1,5 @@
+import { checkUserUniqueness } from './../../services/user.service';
+import { checkFieldExistence } from './../../services/helper.service';
 import {
     Request, Response
 } from "express";
@@ -5,6 +7,7 @@ import httpResponse from "../../services/httpResponse.service";
 import { compareEncryptString, generateToken, encryptString } from "../../services/helper.service";
 import UserModel from "./user.model";
 import MemberModel from "../member/member.model";
+import ErrorWithMessages from "../../common/errorWithMessages";
 
 
 export const login = async (req: Request, res: Response) => {
@@ -164,14 +167,10 @@ export const patchUserEmail = async (req: Request, res: Response) => {
 
 export const patchUserUsername = async (req: Request, res: Response) => {
     try {
-        if (!req.body.username) {
-            return httpResponse.unprocessableEntity(res, ["New username is not defined in body"]);
-        }
 
-        const userInDatabase = await UserModel.findOne({username: req.body.username, _id: {$ne: req.params.id}});
-        if (userInDatabase) {
-            return httpResponse.conflict(res, ["Username already in use"]);
-        }
+        checkFieldExistence(req.body, ["username"]);
+
+        checkUserUniqueness(req.body.username, req.params.id, "username");
         
         const user = await UserModel.findByIdAndUpdate(req.params.id, {
             $set: {
@@ -187,7 +186,10 @@ export const patchUserUsername = async (req: Request, res: Response) => {
         return httpResponse.ok(res, user);
 
     } catch (error) {
-        return httpResponse.internalServerError(res, [error.message]);
+        if(error instanceof ErrorWithMessages)
+            return httpResponse[error.status](res, error.messages);
+
+        return httpResponse.internalServerError(res, [error.message])
     }
 }
 

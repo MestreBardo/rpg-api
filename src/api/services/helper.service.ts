@@ -7,21 +7,33 @@ import {
 import {
     sign
 } from "jsonwebtoken";
+import ErrorWithMessages from "../common/errorWithMessages";
 
-const encryptString = (
+export const encryptString = (
     stringToEncrypt: string,
     salts: number = +`${process.env.SALT}`) => {
     return hash(stringToEncrypt, salts);
 }
 
-const compareEncryptString = (
+export const compareEncryptString = (
     stringToBeComapared: string,
     encryptedString: string
 ) => {
     return compare(stringToBeComapared, encryptedString)
 }
 
-const generateToken = async (payload: any, fields: string[]) => {
+export const checkFieldExistence = (objectToCheck: any, fields: string[]) => {
+    const errors = [];
+    for(const field of fields) {
+        if (!objectToCheck[field]) 
+            errors.push(`${field} is not defined on body`);
+    }
+
+    if(errors.length) 
+        throw new ErrorWithMessages("unprocessableEntity", errors)
+}
+
+export const generateToken = async (payload: any, fields: string[]) => {
     const objectToTokenize: any = {};
 
     for await (const field of fields) {
@@ -37,12 +49,4 @@ const generateToken = async (payload: any, fields: string[]) => {
             }
         )
     }`
-}
-
-
-
-export {
-    encryptString,
-    compareEncryptString,
-    generateToken
 }
