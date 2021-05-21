@@ -11,6 +11,9 @@ const UserSchema = new Schema <UserDocumentInterface, UserModelInterface> ({
             type: mongoose.Types.ObjectId,
             default: new mongoose.mongo.ObjectId()
         },
+        avatar: {
+            type: String
+        },
         name: {
             type: String,
             required: [true, "Name is required"]
@@ -64,14 +67,16 @@ const UserSchema = new Schema <UserDocumentInterface, UserModelInterface> ({
         }
     })
 
-UserSchema.statics.getByEmailOrUsername = async function (email: string, username: string) {
+UserSchema.statics.getByEmailOrUsername = async function(EmailOrUsername: string) {
     return await this.findOne({
         $or: [{
-            email
+            email: EmailOrUsername,
         }, {
-            username
+            username: EmailOrUsername
         }]
-    });
+    })
+    .select("-registeredOn -__v")
+    .lean();
 }
 
 UserSchema.statics.getByTextToSearch = async function (text: string, page: number) {
@@ -90,39 +95,39 @@ UserSchema.statics.getByTextToSearch = async function (text: string, page: numbe
     .limit(20);
 }
 
-UserSchema.methods.validateData = async function () {
-    try {
-        await this.validate();
-        return [];
-    } catch (error) {
-        const errors = [];
+// UserSchema.methods.validateData = async function () {
+//     try {
+//         await this.validate();
+//         return [];
+//     } catch (error) {
+//         const errors = [];
 
-        if (error.errors["name"])
-            errors.push(error.errors["name"].message)
+//         if (error.errors["name"])
+//             errors.push(error.errors["name"].message)
 
-        if (error.errors["surname"])
-            errors.push(error.errors["surname"].message)
+//         if (error.errors["surname"])
+//             errors.push(error.errors["surname"].message)
 
-        if (error.errors["username"])
-            errors.push(error.errors["username"].message)
+//         if (error.errors["username"])
+//             errors.push(error.errors["username"].message)
 
-        if (error.errors["email"])
-            errors.push(error.errors["email"].message)
+//         if (error.errors["email"])
+//             errors.push(error.errors["email"].message)
 
-        if (error.errors["password"])
-            errors.push(error.errors["password"].message)
+//         if (error.errors["password"])
+//             errors.push(error.errors["password"].message)
 
-        if (error.errors["birthday"])
-            errors.push(error.errors["birthday"].message)
+//         if (error.errors["birthday"])
+//             errors.push(error.errors["birthday"].message)
 
-        if (error.errors["country"])
-            errors.push(error.errors["country"].message)
+//         if (error.errors["country"])
+//             errors.push(error.errors["country"].message)
 
-        if (error.errors["gender"])
-            errors.push(error.errors["gender"].message)
+//         if (error.errors["gender"])
+//             errors.push(error.errors["gender"].message)
 
-        return errors;
-    }
-}
+//         return errors;
+//     }
+// }
 
-export default mongoose.model('User', UserSchema);
+export default mongoose.model('user', UserSchema);

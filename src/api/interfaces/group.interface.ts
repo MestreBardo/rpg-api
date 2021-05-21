@@ -20,4 +20,5 @@ export interface GroupDocumentInterface extends Document {
 
 
 export interface GroupModelInterface extends Model<GroupDocumentInterface> {
+    
 }

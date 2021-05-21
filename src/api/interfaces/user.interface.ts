@@ -24,6 +24,6 @@ export interface UserDocumentInterface extends Document {
 
 
 export interface UserModelInterface extends Model<UserDocumentInterface> {
-    getByEmailOrUsername(username: string, email: string): Promise<UserDocumentInterface>
+    getByEmailOrUsername(emailOrUsername: string): Promise<UserDocumentInterface>
     getByTextToSearch(textToSearch: string, page: number): Promise<UserDocumentInterface[]>
 }

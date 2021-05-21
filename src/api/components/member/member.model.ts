@@ -13,28 +13,14 @@ const MemberSchema = new Schema<MemberDocumentInterface, MemberModelInterface>({
         type: mongoose.Types.ObjectId,
         default: new mongoose.mongo.ObjectId()
     },
-    userId: {
+    user: {
         type: mongoose.Types.ObjectId,
+        ref: "user",
         required: true
     },
-    groupLogo: {
-        type: String,
-        required: true,
-    },
-    username: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true
-    },
-    groupId: {
+    group: {
         type: mongoose.Types.ObjectId,
-        required: true
-    },
-    groupName: {
-        type: String,
+        ref: "group",
         required: true
     },
     since: {
@@ -48,4 +34,4 @@ const MemberSchema = new Schema<MemberDocumentInterface, MemberModelInterface>({
 
 })
 
-export default mongoose.model('Member', MemberSchema);
+export default mongoose.model('member', MemberSchema);

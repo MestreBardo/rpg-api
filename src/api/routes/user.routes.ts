@@ -12,7 +12,6 @@ import {
     getUsers,
     patchUserPassword,
     patchUserEmail,
-    patchUserUsername,
     inactiveUser,
     getUserGroups
 } from '../components/users/user.controller';
@@ -47,7 +46,10 @@ export class UsersRoutes extends CommonRoutesConfig {
 
 
         this.router.route('/:id/password')
-            .all(checkTokenValidity, checkUserOwnership)
+            .all(
+                checkTokenValidity, 
+                checkUserOwnership
+            )
             .get(methodNotAllowed)
             .post(methodNotAllowed)
             .put(methodNotAllowed)
@@ -62,13 +64,13 @@ export class UsersRoutes extends CommonRoutesConfig {
             .patch(patchUserEmail)
             .delete(methodNotAllowed)
 
-        this.router.route('/:id/username')
-            .all(checkTokenValidity, checkUserOwnership)
-            .get(methodNotAllowed)
-            .post(methodNotAllowed)
-            .put(methodNotAllowed)
-            .patch(patchUserUsername)
-            .delete(methodNotAllowed)
+        // this.router.route('/:id/username')
+        //     .all(checkTokenValidity, checkUserOwnership)
+        //     .get(methodNotAllowed)
+        //     .post(methodNotAllowed)
+        //     .put(methodNotAllowed)
+        //     .patch(patchUserUsername)
+        //     .delete(methodNotAllowed)
 
         this.router.route('/:id/groups')
             .all(checkTokenValidity)

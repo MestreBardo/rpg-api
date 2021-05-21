@@ -15,12 +15,6 @@ export const encryptString = (
     return hash(stringToEncrypt, salts);
 }
 
-export const compareEncryptString = (
-    stringToBeComapared: string,
-    encryptedString: string
-) => {
-    return compare(stringToBeComapared, encryptedString)
-}
 
 export const checkFieldExistence = (objectToCheck: any, fields: string[]) => {
     const errors = [];
@@ -33,10 +27,10 @@ export const checkFieldExistence = (objectToCheck: any, fields: string[]) => {
         throw new ErrorWithMessages("unprocessableEntity", errors)
 }
 
-export const generateToken = async (payload: any, fields: string[]) => {
+export const generateToken = (payload: any, fields: string[]) => {
     const objectToTokenize: any = {};
 
-    for await (const field of fields) {
+    for (const field of fields) {
         if (payload[field])
             objectToTokenize[field] = payload[field]
     }

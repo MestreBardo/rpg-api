@@ -11,12 +11,8 @@ import MemberModel from '../components/member/member.model';
 
 export const createMember = async (user: UserDocumentInterface, group: GroupDocumentInterface, role: string): Promise<MemberDocumentInterface> => {
     const member = new MemberModel({
-        userId: user._id,
-        username: user.username,
-        email: user.email,
-        groupId: group._id,
-        groupName: group.name,
-        groupLogo: group.logo,
+        user: user._id,
+        group: group._id,
         role
     })
 

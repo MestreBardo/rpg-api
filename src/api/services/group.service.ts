@@ -4,10 +4,11 @@ import ErrorWithMessages from '../common/errorWithMessages';
 import GroupModel from '../components/groups/group.model';
 import MemberModel from '../components/member/member.model';
 import { GroupDocumentInterface } from './../interfaces/group.interface';
+import { LeanDocument } from 'mongoose';
 
 
 export const createValidGroup = async (value: any, user: UserDocumentInterface): Promise<GroupDocumentInterface> => {
-    const group = new GroupModel({ownerUsername: user.username, ownerId: user._id,...value});
+    const group = new GroupModel({owner: user._id,...value});
     const errors = await group.validateData();
 
     if (errors.length) 
@@ -26,15 +27,19 @@ export const saveGroup = async (group: GroupDocumentInterface) => {
     await group.save();
 }
 
-export const groupUsers = async (id: string, page: string = null): Promise<MemberDocumentInterface[]> => {
+export const groupUsers = async (id: string, page: string = null): Promise<LeanDocument<MemberDocumentInterface>[]> => {
     const pageQuery = (+page || 1) - 1;
     const users = await MemberModel
         .find({
-            groupId: id
+            group: id
         })
         .skip(pageQuery * 20)
         .limit(20)
-        .select('-__v -groupId -groupName -_id')
+        .select('-__v -group')
+        .lean()
+        .populate('user', {username: 1, email: 1, avatar: 1})
+        .lean()
+        
 
     if (!users.length) 
         throw new ErrorWithMessages("notFound", ["No Users found for this group"]);
@@ -44,7 +49,7 @@ export const groupUsers = async (id: string, page: string = null): Promise<Membe
 }
 
 export const recoverGroup = async (id: string) => {
-    const group = await GroupModel.findById(id).select("-lastModifiedOn -userCount");
+    const group = await GroupModel.findById(id).select("-lastModifiedOn -userCount").lean().populate("owner",{ username: 1 });
     if (!group) 
         throw new ErrorWithMessages("notFound", ["This group not exist"]);
     

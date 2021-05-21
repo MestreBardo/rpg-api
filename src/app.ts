@@ -3,7 +3,6 @@ import {
 } from './api/routes/user.routes';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import throng from 'throng'
 import helmet from 'helmet'
 import AppConfig from './config/app.config';
 import DatabaseConfig from './config/database.config';

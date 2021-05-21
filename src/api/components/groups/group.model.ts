@@ -13,13 +13,10 @@ const GroupSchema = new Schema<GroupDocumentInterface, GroupModelInterface>({
         type: mongoose.Types.ObjectId,
         default: new mongoose.mongo.ObjectId()
     },
-    ownerId: {
+    owner: {
         type: mongoose.Types.ObjectId,
+        ref: "user",
         required: [true, "Owner id is required"]
-    },
-    ownerUsername: {
-        type: String,
-        required: [true, "Owner is required"]
     },
     name: {
         type: String,
@@ -64,4 +61,4 @@ GroupSchema.methods.validateData = async function () {
     }
 }
 
-export default mongoose.model('Group', GroupSchema);
+export default mongoose.model('group', GroupSchema);

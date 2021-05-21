@@ -34,7 +34,7 @@ export const postGroup = async (req: RequestWithUserInterface, res: Response) =>
 export const getGroup = async (req: Request, res: Response) => {
     try {
         const group = await recoverGroup(req.params.id);
-        return httpResponse.created(res, group)
+        return httpResponse.ok(res, group)
     } catch (error) {
         if(error instanceof ErrorWithMessages)
             return httpResponse[error.status](res, error.messages);

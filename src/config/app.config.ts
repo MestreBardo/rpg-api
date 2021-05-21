@@ -16,7 +16,7 @@ export default class AppConfig {
     async init() {
         await this.dataBase.connect()
         this.app.listen(this.port, () => {
-            console.log("LISTEN...IT'S TIME")
+            console.log(`LISTEN...IT'S TIME - PORT ${this.port}`)
         })
         
     }
