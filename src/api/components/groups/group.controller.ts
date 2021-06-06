@@ -12,6 +12,8 @@ import {
 } from '../../services/member.service';
 import ErrorWithMessages from '../../common/errorWithMessages';
 import { createValidGroup } from '../../services/group.service';
+import memberModel from '../member/member.model';
+import groupModel from './group.model';
 
 export const postGroup = async (req: RequestWithUserInterface, res: Response) => {
     try {
@@ -54,6 +56,44 @@ export const getGroupUsers = async (req: Request, res: Response) => {
             count,
             users
         })
+    } catch (error) {
+        if(error instanceof ErrorWithMessages)
+            return httpResponse[error.status](res, error.messages);
+
+        return httpResponse.internalServerError(res, [error.message])
+    }
+}
+
+export const postUserToGroup = async (req: Request, res: Response) => {
+    try {
+        const memberCheck = await memberModel.findOne({user: req.params.userId, group: req.params.groupId}).select("_id").lean();
+        if(memberCheck) {
+            throw new ErrorWithMessages("conflict", ["User is alrealdy on group"]);
+        }
+
+        const group = await groupModel.findById(req.params.groupId);
+
+        if (!group) {
+            throw new ErrorWithMessages("notFound", ["Group don't exist"]);
+        }
+
+        if (!group.isPublic) {
+            throw new ErrorWithMessages("unauthorized", ["This group is private, please request a invite!"]);
+        }
+
+        const user = {
+            _id: req.params.userId
+        }
+
+        await createMember(user, group, "member");
+        await addUserToGroup(user._id);
+
+        group.userCount++;
+
+        await group.save();
+
+        return httpResponse.created(res, group);
+
     } catch (error) {
         if(error instanceof ErrorWithMessages)
             return httpResponse[error.status](res, error.messages);

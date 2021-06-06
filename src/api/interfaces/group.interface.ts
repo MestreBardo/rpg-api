@@ -6,8 +6,7 @@ import {
 export interface GroupDocumentInterface extends Document {
     _id: string;
     name: string;
-    ownerId: string;
-    ownerUsername: string;
+    owner: string;
     logo: string;
     description: string;
     createdOn: Date;

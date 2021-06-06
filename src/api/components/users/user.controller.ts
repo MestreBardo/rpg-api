@@ -29,35 +29,6 @@ export const login = async (req: Request, res: Response) => {
 export const register = async (req: Request, res: Response) => {
     try {
         const token = await UserService.register(req.body)
-        // const user = createValidUser(req.body)
-        
-        
-        // new UserModel(req.body)
-        // const errors = await user.validateData();
-
-        // if (errors.length) {
-        //     return httpResponse.unprocessableEntity(res, errors);
-        // }
-        // await checkUserUniqueness
-        // const userInDataBase = await UserModel.getByEmailOrUsername(user.email, user.username);
-
-        // if (userInDataBase)
-        //     return httpResponse.conflict(res, ["USERNAME or EMAIL is already taken"]);
-
-        // user.password = await encryptString(user.password);
-
-        // await user.save();
-        
-        // const token = await generateToken(user, [
-        //     "_id",
-        //     "name",
-        //     "surname",
-        //     "birthday",
-        //     "username",
-        //     "email"
-        // ]);
-
-        // return httpResponse.created(res, token);
         return res.status(200).send(token);
 
     } catch (error) {

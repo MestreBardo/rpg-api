@@ -5,11 +5,10 @@ import {
 
 export interface MemberDocumentInterface extends Document {
     _id: string
-    userId: string;
+    user: string;
     username: string;
     email: string;
-    groupId: string;
-    groupName: string;
+    group: string;
     since: Date;
     role: string;
 
