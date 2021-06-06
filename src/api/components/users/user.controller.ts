@@ -14,7 +14,7 @@ export const login = async (req: Request, res: Response) => {
     try {
         const token = await UserService.login(req.body);
 
-        res.status(200).send(token)
+       return httpResponse.ok(res, {token})
 
     } catch (error) {
         if(error instanceof ErrorWithMessages)
@@ -29,7 +29,7 @@ export const login = async (req: Request, res: Response) => {
 export const register = async (req: Request, res: Response) => {
     try {
         const token = await UserService.register(req.body)
-        return res.status(200).send(token);
+        return httpResponse.ok(res, {token});
 
     } catch (error) {
         if(error instanceof ErrorWithMessages)
