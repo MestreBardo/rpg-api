@@ -5,13 +5,13 @@ import mongoose, {
 import {
     MemberDocumentInterface,
     MemberModelInterface,
-} from './../../interfaces/member.interface';
+} from '../../interfaces/member.interface';
 
 
 const MemberSchema = new Schema<MemberDocumentInterface, MemberModelInterface>({
     _id: {
         type: mongoose.Types.ObjectId,
-        default: new mongoose.mongo.ObjectId()
+        auto: true
     },
     user: {
         type: mongoose.Types.ObjectId,

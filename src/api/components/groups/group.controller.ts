@@ -12,8 +12,8 @@ import {
 } from '../../services/member.service';
 import ErrorWithMessages from '../../common/errorWithMessages';
 import { createValidGroup } from '../../services/group.service';
-import memberModel from '../member/member.model';
 import groupModel from './group.model';
+import memberModel from '../members/member.model';
 
 export const postGroup = async (req: RequestWithUserInterface, res: Response) => {
     try {

@@ -1,3 +1,4 @@
+import { SystemRoutes } from './api/routes/system.routes';
 import {
     UsersRoutes
 } from './api/routes/user.routes';
@@ -9,6 +10,7 @@ import DatabaseConfig from './config/database.config';
 import { AuthRoutes } from './api/routes/auth.routes';
 import { DefaultRoutes } from './api/routes/default.routes';
 import { GroupRoutes } from './api/routes/group.routes';
+import { CampaingRoutes } from './api/routes/campaing.routes';
 
 
 const port = +`${process.env.PORT}` || 4000;
@@ -38,6 +40,8 @@ const start = async (id: number) => {
         .addRoute(new AuthRoutes())
         .addRoute(new UsersRoutes())
         .addRoute(new GroupRoutes())
+        .addRoute(new CampaingRoutes())
+        .addRoute(new SystemRoutes())
         .addRoute(new DefaultRoutes())
         .init();
 

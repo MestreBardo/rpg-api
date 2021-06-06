@@ -1,18 +1,15 @@
+import { CampaignDocumentInterface, CampaignModelInterface } from './../../interfaces/campaign.interface';
 import mongoose, {
-    Schema,
+    Types,
+    Schema
 } from "mongoose";
 
-import {
-    GroupDocumentInterface,
-    GroupModelInterface,
-} from './../../interfaces/group.interface';
 
-
-const GroupSchema = new Schema<GroupDocumentInterface, GroupModelInterface>({
+const CampaignSchema = new Schema<CampaignDocumentInterface, CampaignModelInterface>({
     _id: {
         type: mongoose.Types.ObjectId,
         auto: true
-  },
+    },
     owner: {
         type: mongoose.Types.ObjectId,
         ref: "user",
@@ -22,13 +19,17 @@ const GroupSchema = new Schema<GroupDocumentInterface, GroupModelInterface>({
         type: String,
         required: [true, "Name is required"]
     },
-    logo: {
+    group: {
+        type: mongoose.Types.ObjectId,
+        ref: "group"
+    },
+    cover: {
         type: String
     },
     description: {
         type: String
     },
-    userCount: {
+    playerCount: {
         type: Number,
         default: 1
     },
@@ -43,11 +44,15 @@ const GroupSchema = new Schema<GroupDocumentInterface, GroupModelInterface>({
     lastModifiedOn: {
         type: Number,
         default: new Date().getTime()
+    },
+    system: {
+        type: mongoose.Types.ObjectId,
+        ref: "system"
     }
 
 })  
 
-GroupSchema.methods.validateData = async function () {
+CampaignSchema.methods.validateData = async function () {
     try {
         await this.validate();
         return [];
@@ -61,4 +66,4 @@ GroupSchema.methods.validateData = async function () {
     }
 }
 
-export default mongoose.model('group', GroupSchema);
+export default mongoose.model('campaign', CampaignSchema);

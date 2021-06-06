@@ -7,7 +7,7 @@ import {
 import {
     UserDocumentInterface
 } from "../interfaces/user.interface";
-import MemberModel from '../components/member/member.model';
+import MemberModel from '../components/members/member.model';
 
 export const createMember = async (user: any, group: any, role: string): Promise<MemberDocumentInterface> => {
     const member = new MemberModel({

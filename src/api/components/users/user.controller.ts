@@ -5,7 +5,7 @@ import {
 import httpResponse from "../../services/httpResponse.service";
 import { generateToken, encryptString } from "../../services/helper.service";
 import UserModel from "./user.model";
-import MemberModel from "../member/member.model";
+import MemberModel from "../members/member.model";
 import ErrorWithMessages from "../../common/errorWithMessages";
 import * as UserService from "../../services/user.service"
 

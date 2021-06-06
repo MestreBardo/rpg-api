@@ -2,9 +2,9 @@ import { MemberDocumentInterface } from './../interfaces/member.interface';
 import { UserDocumentInterface } from './../interfaces/user.interface';
 import ErrorWithMessages from '../common/errorWithMessages';
 import GroupModel from '../components/groups/group.model';
-import MemberModel from '../components/member/member.model';
 import { GroupDocumentInterface } from './../interfaces/group.interface';
 import { LeanDocument } from 'mongoose';
+import MemberModel from '../components/members/member.model';
 
 
 export const createValidGroup = async (value: any, user: UserDocumentInterface): Promise<GroupDocumentInterface> => {

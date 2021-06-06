@@ -64,6 +64,10 @@ const UserSchema = new Schema <UserDocumentInterface, UserModelInterface> ({
         groupCount: {
             type: Number,
             default: 0
+        },
+        campaignCount: {
+            type: Number,
+            default: 0
         }
     })
 
