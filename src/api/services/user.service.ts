@@ -1,22 +1,22 @@
 import { UserDocumentInterface } from './../interfaces/user.interface';
-import { compare } from "bcrypt";
+import { compare,  hash} from "bcrypt";
 import { sign } from "jsonwebtoken";
 import ErrorWithMessages from "../common/errorWithMessages";
 import UserModel from "../components/users/user.model";
 
 export const login = async (receivedData: any) => {
-    const userInDatabase = await UserModel.getByEmailOrUsername(receivedData.login);
+    const userInDatabase = await UserModel.getByEmailOrUsername(receivedData.login, receivedData.login);
 
     if(!userInDatabase)
-        throw new ErrorWithMessages("", ["teste"]);
+        throw new ErrorWithMessages("notFound", ["User not exist in database"]);
 
     const passwordMatch = await compare(receivedData.password, userInDatabase.password);
 
     if(!passwordMatch)
-        throw new ErrorWithMessages("", ["teste"]);
+        throw new ErrorWithMessages("unauthorized", ["User password don't match"]);
     
     if(!userInDatabase.active)
-        throw new ErrorWithMessages("", ["teste"]);
+        throw new ErrorWithMessages("gone", ["User is no longer active"]);
 
     const {_id, name, surname, city, country, birthday, gender, email} = userInDatabase;
 
@@ -36,6 +36,7 @@ export const login = async (receivedData: any) => {
 }
 
 export const register = async (receivedData: UserDocumentInterface) => {
+    console.log(receivedData);
     const userToRegister = new UserModel(receivedData);
     await new Promise((resolve, reject) => {
         userToRegister.validate(async (errors) => {
@@ -48,16 +49,20 @@ export const register = async (receivedData: UserDocumentInterface) => {
                     errorsReturn.push(message);
                     
                 }
-                console.log(errorsReturn);
                 reject(new ErrorWithMessages("conflict", [...errorsReturn]))
             }
-            resolve("");
+            resolve(null);
         })
     })
-    console.log("help");
 
+    const userInDb = await UserModel.getByEmailOrUsername(userToRegister.username, userToRegister.email);
+
+    if (userInDb) {
+        throw new ErrorWithMessages("conflict", ["User or Email already exist in database"]);
+    };
+
+    userToRegister.password = await hash(userToRegister.password, +process.env.SALT);
     await userToRegister.save();
-    console.log("helpu");
 
     const {_id, name, surname, city, country, birthday, gender, email} = userToRegister;
 

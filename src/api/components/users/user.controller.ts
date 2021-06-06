@@ -15,14 +15,12 @@ export const login = async (req: Request, res: Response) => {
         const token = await UserService.login(req.body);
 
         res.status(200).send(token)
-        // return httpResponse.ok(res, token)
 
     } catch (error) {
-        res.status(500).send("error")
-        // if(error instanceof ErrorWithMessages)
-        //     return httpResponse[error.status](res, [error.messages]);
+        if(error instanceof ErrorWithMessages)
+            return httpResponse[error.status](res, [error.messages]);
 
-        // return httpResponse.internalServerError(res, [error.message])
+        return httpResponse.internalServerError(res, [error.message])
     }
 
 

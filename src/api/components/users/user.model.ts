@@ -9,7 +9,7 @@ import {UserDocumentInterface, UserModelInterface} from "../../interfaces/user.i
 const UserSchema = new Schema <UserDocumentInterface, UserModelInterface> ({
         _id: {
             type: mongoose.Types.ObjectId,
-            default: new mongoose.mongo.ObjectId()
+            auto: true
         },
         avatar: {
             type: String
