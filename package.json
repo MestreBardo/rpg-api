@@ -1,46 +1,35 @@
 {
-  "name": "rpg-api",
+  "name": "rpg-backend",
   "version": "1.0.0",
-  "description": "Project api",
-  "main": "app.js",
+  "main": "dist/server.js",
+  "license": "MIT",
   "scripts": {
-    "start": "node build/app.js",
-    "build": "tsc --project ./",
-    "dev": "nodemon -r dotenv/config src/app.ts dotenv_config_path=./config/.env",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --exit-child -r dotenv/config  src/server.ts",
+    "start": "tsc && node dist/server.js ",
+    "test": "jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MestreBardo/rpg-api.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/MestreBardo/rpg-api/issues"
-  },
-  "homepage": "https://github.com/MestreBardo/rpg-api#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
-    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "helmet": "^4.5.0",
+    "express-validator": "^6.13.0",
+    "googleapis": "^89.0.0",
+    "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.12.7",
-    "throng": "^5.0.0"
+    "mongoose": "^6.0.11",
+    "validator": "^13.6.0"
   },
   "devDependencies": {
-    "@types/bcrypt": "^3.0.1",
-    "@types/body-parser": "^1.19.0",
-    "@types/cors": "^2.8.10",
-    "@types/express": "^4.17.11",
-    "@types/jsonwebtoken": "^8.5.1",
-    "@types/node": "^15.0.1",
-    "@types/throng": "^5.0.0",
-    "nodemon": "^2.0.7",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.2.4"
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/joi": "^17.2.3",
+    "@types/jsonwebtoken": "^8.5.5",
+    "@types/mongoose": "^5.11.97",
+    "@types/validator": "^13.6.5",
+    "jest": "^27.3.1",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.4.4"
   }
 }
