@@ -1,5 +1,6 @@
 import  express, { NextFunction, Request, Response }  from "express"
 import { Routes } from "./routes/v1/Routes";
+import cors from 'cors';
 
 const app = express();
 
@@ -14,7 +15,9 @@ app.use(
 app.use(
     "/v1",
     Routes.create()
-)
+);
+
+app.use(cors())
 
 app.use(
     (err: any, req: Request, res: Response, next: NextFunction) => {
