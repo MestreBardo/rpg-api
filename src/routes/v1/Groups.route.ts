@@ -16,11 +16,56 @@ import { UserTokenFind } from '../../core/handles/User/UserTokenFind.handle';
 import { Validator } from '../../helpers/Validator';
 import { CheckMemberRole } from '../../core/handles/Member/CheckMemberRole.handle';
 import { MemberIdValidator } from '../../common/validators/Member/MemberId.joi';
+import { GroupPutValidator } from '../../common/validators/Group/GroupPut.joi';
+import { GroupPut } from '../../core/handles/Group/GroupPut.handle';
+import { GroupPatchName } from '../../core/handles/Group/GroupPatchName.handle';
+import { GroupPatchNameValidator } from '../../common/validators/Group/GroupPatchName.joi';
+import { GroupFindOne } from '../../core/handles/Group/GroupFindOne.handle';
+import { GroupFindMany } from '../../core/handles/Group/GroupFindMany.handle';
+import { GroupMembers } from '../../core/handles/Group/GroupMembers.handle';
 
 
 class GroupsRoute {
     static create() {
         const router = Router();
+
+        router.get(
+            "/:groupId",
+            Validator.validate(
+                JwtValidator.schema,
+                ValidationSource.HEADER
+            ),
+            Validator.validate(
+                GroupIdValidator.schema,
+                ValidationSource.PARAMS
+            ),
+            JwtVerification.handle,
+            GroupFindOne.handle
+        );
+
+        router.get(
+            "/:groupId/members",
+            Validator.validate(
+                JwtValidator.schema,
+                ValidationSource.HEADER
+            ),
+            Validator.validate(
+                GroupIdValidator.schema,
+                ValidationSource.PARAMS
+            ),
+            JwtVerification.handle,
+            GroupMembers.handle
+        );
+
+        router.get(
+            "",
+            Validator.validate(
+                JwtValidator.schema,
+                ValidationSource.HEADER
+            ),
+            JwtVerification.handle,
+            GroupFindMany.handle
+        );
 
         router.post(
             "",
@@ -130,6 +175,45 @@ class GroupsRoute {
             CheckMemberRole.handle,
             GroupDemote.handle
         );
+
+        router.put(
+            "/:groupId",
+            Validator.validate(
+                JwtValidator.schema,
+                ValidationSource.HEADER
+            ),
+            Validator.validate(
+                GroupIdValidator.schema,
+                ValidationSource.PARAMS
+            ),
+            Validator.validate(
+                GroupPutValidator.schema
+            ),
+            JwtVerification.handle,
+            UserTokenFind.handle,
+            CheckUserRole.handle,
+            GroupPut.handle
+        );
+
+        router.patch(
+            "/:groupId/name",
+            Validator.validate(
+                JwtValidator.schema,
+                ValidationSource.HEADER
+            ),
+            Validator.validate(
+                GroupPatchNameValidator.schema
+            ),
+            Validator.validate(
+                GroupIdValidator.schema,
+                ValidationSource.PARAMS
+            ),
+            JwtVerification.handle,
+            GroupDuplicity.handle,
+            UserTokenFind.handle,
+            CheckUserRole.handle,
+            GroupPatchName.handle
+        )
 
 
         return router;
