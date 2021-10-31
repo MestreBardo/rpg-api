@@ -15,6 +15,7 @@ const JoiObjectId = () =>
 
 const JoiAuthBearer = () =>
   Joi.string().custom((value: string, helpers) => {
+    if (!value) return helpers.error('any.invalid');
     if (!value.startsWith('Bearer ')) return helpers.error('any.invalid');
     if (!value.split(' ')[1]) return helpers.error('any.invalid');
     return value;

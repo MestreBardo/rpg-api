@@ -1,3 +1,4 @@
+import { Group } from "../../common/entities/Group.entity";
 import { Member } from "../../common/entities/Member.entity";
 import { MemberMongoose } from "../models/Member.mongoose";
 
@@ -41,6 +42,28 @@ class MemberRepository {
         await member.save();
 
         return member.toJSON();
+    }
+
+    static async findUserByGroup(groupId: string, page: number): Promise<Member[]> {
+        const members = await MemberMongoose.model.find(
+            {
+                group: groupId
+            }
+        )
+        .skip(
+            (page - 1) * 20
+        ).limit(
+            20
+        )
+        .populate(
+            {
+                path:"user",
+                select: "_id username name surname email"
+            }
+        )
+        .lean();
+
+        return members;
     }
 
     static async createOne(group: Member, lean: boolean = false): Promise<Member> {
