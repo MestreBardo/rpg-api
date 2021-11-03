@@ -44,8 +44,6 @@ describe('Test MemberAdminRoleHandle', () => {
             res,
             next
         )
-        console.log(res.response)
-
 
         expect(next).toBeCalled();
     });

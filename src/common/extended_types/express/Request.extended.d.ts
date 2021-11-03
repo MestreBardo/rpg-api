@@ -7,4 +7,5 @@ declare interface RequestWithUser extends Request {
     otherMember: Member;
     group: Group;
     campaign: Campaign;
+    player: Player
 }

@@ -20,14 +20,15 @@ import { Validator } from '../../helpers/Validator';
 class CampaignRoute {
     static create() {
         const router = Router();
-
-        router.post(
-            "",
+        router.use(
             Validator.validate(
                 JwtValidator.schema,
                 ValidationSource.HEADER
             ),
             JwtVerification.handle,
+        )
+        router.post(
+            "",
             Validator.validate(
                 CampaignCreateValidator.schema
             ),
@@ -40,11 +41,7 @@ class CampaignRoute {
         );
 
         router.patch(
-            "/:campaignId",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
+            "/:campaignId/name",
             Validator.validate(
                 CampaignUpdateNameValidator.schema
             ),
@@ -52,7 +49,6 @@ class CampaignRoute {
                 CampaignIdValidator.schema,
                 ValidationSource.PARAMS
             ),
-            JwtVerification.handle,
             UserTokenFind.handle,
             CampaignCheckRole.handle(
                 ["master"]

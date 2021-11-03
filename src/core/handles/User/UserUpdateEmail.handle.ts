@@ -10,7 +10,6 @@ class UserEmailUpdate {
 
         try {
             const user = req.user;
-            console.log(user);
 
             const { email } = req.body;
 

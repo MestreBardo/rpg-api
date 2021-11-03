@@ -65,8 +65,6 @@ describe('Test GroupMembersHandle', () => {
             next
         )
 
-        console.log(res.response);
-
         expect(res.response.payload[0].name).toBe("one");
         expect(res.code).toBe(200);
     });

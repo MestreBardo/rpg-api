@@ -42,6 +42,7 @@ describe("Test signup route", () => {
             gender: "man",
             birthday: "07-07-1995"
         };
+        
     })
     test("Should create a new user", done => {
         request(app)

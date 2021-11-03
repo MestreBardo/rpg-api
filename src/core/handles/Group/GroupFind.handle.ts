@@ -34,7 +34,6 @@ class GroupFind {
 
                 req.group = group;
 
-                console.log(req.group);
                 
                 return next();
         

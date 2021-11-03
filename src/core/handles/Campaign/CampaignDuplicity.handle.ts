@@ -10,6 +10,14 @@ class CampaignDuplicity {
             const { _id: groupId } = req.group;
             const { name } = req.body; 
 
+            if (!name || !groupId)
+                return HttpResponse.create(
+                    HttpStatus.badRequest,
+                    req, 
+                    res, 
+                    "Token not present or incorrect"
+                );
+
             const campaign = await CampaignRepository.findByNameAndGroup(
                 groupId,
                 name

@@ -8,18 +8,8 @@ class CampaignCheckRole {
     static handle(roles: string[]) {
         return async (req: RequestWithUser, res: Response, next: NextFunction) => {
             try {
-                const { _id: userId } = req.user;
-                const { campaignId } = req.params;
-    
-                const player = await PlayerRepository.findByUserOnCampaign(userId, campaignId);
-    
-                if (!player)
-                    return HttpResponse.create(
-                        HttpStatus.unauthorized,
-                        req,
-                        res,
-                        "You dont belong to this group."
-                    );
+                const player = req.player;
+
     
                 if (roles.includes(player.role))
                     return HttpResponse.create(

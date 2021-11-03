@@ -16,7 +16,7 @@ describe("Test signup route", () => {
         userTest = {
             name: "vinycius",
             surname: "monteiro",
-            username: "mestreBardo",
+            username: "mestrebardo",
             password: await GeneratePasswordService.execute("@masterpassword"),
             confirmationPassword: "@masterpassword",
             email: "vinyciussilvamonteiro@gmail.com",

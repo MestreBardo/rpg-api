@@ -47,8 +47,7 @@ describe('Test JwtVerificationHandle', () => {
             next
         )
 
-        console.log(req.token)
-
+ 
         expect(next).toBeCalled();
     });
 
