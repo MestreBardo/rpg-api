@@ -3,48 +3,43 @@ import { HttpStatus } from "../../../common/constants/HttpStatus.enum";
 import { RequestWithUser } from "../../../common/extended_types/express/Request.extended";
 import { HttpResponse } from "../../../common/responses/HttpResponse.factory";
 import { MemberRepository } from "../../../database/repositories/Member.repository";
-import { UserRepository } from "../../../database/repositories/User.repository";
 
 class GroupDemote {
     static async handle (req: RequestWithUser, res: Response, next: NextFunction) {
         try {
-            const { memberId } = req.params;
-            const member = await MemberRepository.findById(memberId);
+            try {
+                const member = req.otherMember;
 
-            const user = await UserRepository.findOneById(member.user, true);
-
-            if(!user)
+                if (!member)
+                    return HttpResponse.create(
+                        HttpStatus.internalServerError,
+                        req,
+                        res,
+                        "Server have a error to process the request!"
+                    );
+    
+                const demotedMember = await MemberRepository.demoteUser(member["_id"]);
+    
                 return HttpResponse.create(
-                    HttpStatus.notFound,
+                    HttpStatus.ok,
+                    req,
+                    res,
+                    {
+                        _id: demotedMember["user"]["_id"],
+                        username: demotedMember["user"]["username"],
+                        email: demotedMember["user"]["email"],
+                        role: demotedMember["role"]
+                    }
+                )
+    
+            } catch (error) {
+                return HttpResponse.create(
+                    +error.code || HttpStatus.internalServerError,
                     req, 
                     res, 
-                    "User not exist in database!"
-                ); 
-
-
-            if(!["admin", "owner"].includes(member.role))
-                return HttpResponse.create(
-                    HttpStatus.conflict,
-                    req, 
-                    res, 
-                    "User alrealdy demoted!"
+                    error.message
                 );
-
-            const demotedMember = await MemberRepository.demoteUser(memberId);
-
-            return HttpResponse.create(
-                HttpStatus.ok,
-                req,
-                res,
-                {
-                    _id: user["_id"],
-                    username: user.username,
-                    email: user.email,
-                    name: user.name,
-                    surname: user.surname,
-                    role: demotedMember.role
-                }
-            )
+            }
 
         } catch (error) {
             return HttpResponse.create(

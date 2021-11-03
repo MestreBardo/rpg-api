@@ -4,6 +4,7 @@ import { BadRequest } from "./BadRequest.error";
 import { Conflict } from "./Conflict.error";
 import { Created } from "./Created.success";
 import { Gone } from "./Gone.error";
+import { InternalServerError } from "./InternalServerError.error";
 import { NotFound } from "./NotFound.error";
 import { Ok } from "./Ok.success";
 import { Unauthorized } from "./Unauthorized.error";
@@ -39,7 +40,7 @@ class HttpResponse {
                 response = new Unauthorized(payload);
                 break;
             default:
-                return console.log(statusCode);
+                response = new InternalServerError(payload)
         }
 
         return res.status(statusCode).send(

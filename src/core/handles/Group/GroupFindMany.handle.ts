@@ -8,27 +8,17 @@ class GroupFindMany {
         try {
             const { page, name } = req.query;
                 
-            const group = await GroupRepository.findByMany(
+            const group = await GroupRepository.findMany(
                 name as string,
                 +page ?? 1,
-                true
             )
-
-            if (!group.length)
-                return HttpResponse.create(
-                    HttpStatus.notFound,
-                    req,
-                    res,
-                    "None group found"
-                );
             
             return HttpResponse.create(
-                    HttpStatus.ok,
-                    req,
-                    res,
-                    group
-                    
-                );
+                HttpStatus.ok,
+                req,
+                res,
+                group
+            );
 
     
         } catch (error) {

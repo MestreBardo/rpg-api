@@ -9,31 +9,20 @@ import { UserRepository } from "../../../database/repositories/User.repository";
 class GroupRemove {
     static async handle (req: RequestWithUser, res: Response, next: NextFunction) {
         try {
-            const { memberId, groupId } = req.params;
-            const member = await MemberRepository.findById(memberId);
+            const group = req.group;
+            const member = req.otherMember;
 
-            const user = await UserRepository.findOneById(member.user, true);
-
-            if(!member)
+            if (!member || !group)
                 return HttpResponse.create(
-                    HttpStatus.gone,
-                    req, 
-                    res, 
-                    "Member alrealdy gone!"
+                    HttpStatus.internalServerError,
+                    req,
+                    res,
+                    "Server have a error to process the request!"
                 );
 
-            if(!user)
-                return HttpResponse.create(
-                    HttpStatus.notFound,
-                    req, 
-                    res, 
-                    "User not exist in database!"
-                ); 
-
-
-            await MemberRepository.removeUser(memberId);
-            await GroupRepository.removeMember(groupId);
-            await UserRepository.removeGroup(member.user)
+            await MemberRepository.removeUser(member["_id"]);
+            await GroupRepository.removeMember(group);
+            await UserRepository.removeGroup(member["user"])
 
             return HttpResponse.create(
                 HttpStatus.ok,

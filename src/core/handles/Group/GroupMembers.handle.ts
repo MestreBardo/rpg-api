@@ -1,27 +1,31 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpStatus } from "../../../common/constants/HttpStatus.enum";
+import { RequestWithUser } from "../../../common/extended_types/express/Request.extended";
 import { HttpResponse } from "../../../common/responses/HttpResponse.factory";
-import { GroupRepository } from "../../../database/repositories/Group.repository";
 import { MemberRepository } from "../../../database/repositories/Member.repository";
 
 class GroupMembers {
-    static async handle(req: Request, res: Response, next: NextFunction) {
+    static async handle(req: RequestWithUser, res: Response, next: NextFunction) {
 
         try {
-            const { groupId } = req.params;
+            const group = req.group;
             const { page } = req.query;
-
-            const group = await GroupRepository.findById(groupId);
 
             if (!group)
                 return HttpResponse.create(
-                    HttpStatus.notFound,
+                    HttpStatus.internalServerError,
                     req,
                     res,
-                    "Group not found"
+                    "Server have a error to process the request!"
                 );
+
+
             
-            const members = await MemberRepository.findUserByGroup(groupId, +page || 1);
+            const members = await MemberRepository
+                .findUserByGroup(
+                    group["_id"], 
+                    +page || 1
+                );
 
             return HttpResponse.create(
                 HttpStatus.ok,

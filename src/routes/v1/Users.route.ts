@@ -2,107 +2,97 @@ import { Router } from 'express';
 import { ValidationSource } from '../../common/enums/ValidationSource.enum';
 import { JwtValidator } from '../../common/validators/Auth/Jwt.joi';
 import { UserIdValidator } from '../../common/validators/User/UserId.joi';
-import { UserPutValidator } from '../../common/validators/User/UserPut.joi';
+import { UserUpdateValidator } from '../../common/validators/User/UserUpdate.joi';
 import { JwtVerification } from '../../core/handles/Jwt/JwtVerification.handle';
-import { UserFind } from '../../core/handles/User/UserFind.handle';
-import { UserPut } from '../../core/handles/User/UserPut.handle';
-import { UserPossession } from '../../core/handles/User/UserPossession.handle';
+import { UserFindOne } from '../../core/handles/User/UserFindOne.handle';
+import { UserUpdate } from '../../core/handles/User/UserUpdate.handle';
 import { Validator } from '../../helpers/Validator';
-import { EmailPatch } from '../../core/handles/User/EmailPatch.handle';
-import { PasswordPatch } from '../../core/handles/User/PasswordPatch.handle';
-import { UsernamePatch } from '../../core/handles/User/UsernamePatch.handle';
-import { EmailPatchValidator } from '../../common/validators/User/EmailPatch.joi';
-import { PasswordPatchValidator } from '../../common/validators/User/PasswordPatch.joi';
-import { UsernamePatchValidator } from '../../common/validators/User/UsenamePatch.joi';
+import { UserEmailUpdate } from '../../core/handles/User/UserUpdateEmail.handle';
+import { UserPasswordUpdate } from '../../core/handles/User/UserPasswordUpdate.handle';
+import { UserUsernameUpdate } from '../../core/handles/User/UserUsernameUpdate.handle';
+import { UserUpdateEmailValidator } from '../../common/validators/User/UserUpdateEmail.joi';
+import { UserUpdatePasswordValidator } from '../../common/validators/User/UserUpdatePassword.joi';
+import { UserUpdateUsernameValidator } from '../../common/validators/User/UserUpdateUsename.joi';
 import { UserDuplicity } from '../../core/handles/User/UserDuplicity.handle';
 import { UserTokenFind } from '../../core/handles/User/UserTokenFind.handle';
-import { FindMe } from '../../core/handles/User/FindMe.handle';
+import { UserFindMe } from '../../core/handles/User/UserFindMe.handle';
+import { UserCheckPassword } from '../../core/handles/User/UserCheckPassword.handle';
 
 class UsersRoute {
     static create() {
         const router = Router();
 
-        router.get(
-            "/:userId",
+        //JWT check authorization
+        router.use(
             Validator.validate(
                 JwtValidator.schema,
                 ValidationSource.HEADER
             ),
+            JwtVerification.handle,
+        )
+
+        //Get token sender user
+        router.get(
+            "/me",
+            UserFindMe.handle
+        );
+
+        //Get a single user
+        router.get(
+            "/:userId",
             Validator.validate(
                 UserIdValidator.schema,
                 ValidationSource.PARAMS
             ),
-            JwtVerification.handle,
-            UserFind.handle
+            UserFindOne.handle
         );
 
-        router.get(
-            "/my",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            JwtVerification.handle,
-            UserTokenFind.handle,
-            FindMe.handle
-        );
         
+        
+        //Update user
         router.put(
             "",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
+                UserUpdateValidator.schema
             ),
-            Validator.validate(
-                UserPutValidator.schema
-            ),
-            JwtVerification.handle,
             UserTokenFind.handle,
-            UserPut.handle
+            UserCheckPassword.handle,
+            UserUpdate.handle
         );
 
+        //Update user email
         router.patch(
             "/email",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
+                UserUpdateEmailValidator.schema
             ),
-            Validator.validate(
-                EmailPatchValidator.schema
-            ),
-            JwtVerification.handle,
             UserDuplicity.handle,
             UserTokenFind.handle,
-            EmailPatch.handle
+            UserCheckPassword.handle,
+            UserEmailUpdate.handle
         );
 
+        //Update user password
         router.patch(
             "/password",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
+                UserUpdatePasswordValidator.schema
             ),
-            Validator.validate(
-                PasswordPatchValidator.schema
-            ),
-            JwtVerification.handle,
             UserTokenFind.handle,
-            PasswordPatch.handle
+            UserCheckPassword.handle,
+            UserPasswordUpdate.handle
         );
 
+        //Update user username
         router.patch(
             "/username",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
+                UserUpdateUsernameValidator.schema
             ),
-            Validator.validate(
-                UsernamePatchValidator.schema
-            ),
-            JwtVerification.handle,
-            UserDuplicity.handle,
             UserTokenFind.handle,
-            UsernamePatch.handle
+            UserDuplicity.handle,
+            UserCheckPassword.handle,
+            UserUsernameUpdate.handle
         );
 
 

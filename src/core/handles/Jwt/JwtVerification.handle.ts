@@ -6,7 +6,16 @@ import { HttpResponse } from "../../../common/responses/HttpResponse.factory";
 
 class JwtVerification {
     static async handle(req: RequestWithUser, res: Response, next: NextFunction) {
-        const token = req.headers["authorization"].split(" ")[1];
+        const authorization = req.headers["authorization"];
+        if (!authorization)
+            return HttpResponse.create(
+                HttpStatus.internalServerError,
+                req,
+                res,
+                "Server have a error to process the request!"
+            );
+            
+        const token = authorization.split(" ")[1];
         verify(
             token,
             process.env.TOKEN, 

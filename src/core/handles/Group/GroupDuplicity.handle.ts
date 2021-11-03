@@ -5,22 +5,41 @@ import { GroupRepository } from "../../../database/repositories/Group.repository
 
 class GroupDuplicity {
     static async handle(req: Request, res: Response, next: NextFunction) {
-        const { name } = req.body;
-        const groupOnDatabase = await GroupRepository.findByName(
-            name,
-            true
-        )
+        try {
 
-        if (groupOnDatabase) {
+            const { name } = req.body;
+
+            if (!name)
+                return HttpResponse.create(
+                    HttpStatus.internalServerError,
+                    req,
+                    res,
+                    "Server have a error to process the request!"
+                );
+
+            const groupOnDatabase = await GroupRepository.findByName(
+                name,
+            )
+
+            if (groupOnDatabase) {
+                return HttpResponse.create(
+                    HttpStatus.conflict,
+                    req,
+                    res,
+                    "This group name is already taken!"
+                )
+            }
+
+            next()
+
+        } catch (error) {
             return HttpResponse.create(
-                HttpStatus.conflict,
-                req,
-                res,
-                "This group name is already taken!"
+                +error.code || HttpStatus.internalServerError,
+                req, 
+                res, 
+                error.message
             )
         }
-
-        next()
     }
 }
 

@@ -7,10 +7,17 @@ class GroupFindOne {
     static async handle(req: Request, res: Response, next: NextFunction) {
         try {
             const { groupId } = req.params;
+
+            if (!groupId)
+                return HttpResponse.create(
+                    HttpStatus.internalServerError,
+                    req,
+                    res,
+                    "Server have a error to process the request!"
+                );
                 
             const group = await GroupRepository.findById(
-                groupId,
-                true
+                groupId
             )
 
             if (!group)

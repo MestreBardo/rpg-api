@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { ValidationSource } from "../../common/enums/ValidationSource.enum";
-import { ExternalCode } from "../../common/validators/User/ExternalCode.joi";
+import { UserExternalCodeValidator } from "../../common/validators/User/UserExternalCode.joi";
 import { LoginValidator } from "../../common/validators/Auth/Login.joi";
-import { UserValidator } from "../../common/validators/User/User.joi";
+import { UserCreateValidator } from "../../common/validators/User/UserCreate.joi";
 import { GoogleUser } from "../../core/handles/Authorization/GoogleUser.handle";
-import { SignIn } from "../../core/handles/Authorization/SignIn.handle";
-import { SignUp } from "../../core/handles/Authorization/Signup.handle";
+import { AuthorizationSignIn } from "../../core/handles/Authorization/AuthorizationSignIn.handle";
+import { AuthorizationSignUp } from "../../core/handles/Authorization/AuthorizationSignUp.handle";
 import { UserDuplicity } from "../../core/handles/User/UserDuplicity.handle";
 import { Validator } from "../../helpers/Validator";
 
@@ -16,7 +16,7 @@ class AuthorizationRoute {
         router.post(
             "/google",
             Validator.validate(
-                ExternalCode.schema,
+                UserExternalCodeValidator.schema,
                 ValidationSource.QUERY 
             ),
             GoogleUser.handle
@@ -24,17 +24,17 @@ class AuthorizationRoute {
         router.post(
             "/signup",
             Validator.validate(
-                UserValidator.schema
+                UserCreateValidator.schema
             ),
             UserDuplicity.handle,
-            SignUp.handle
+            AuthorizationSignUp.handle
         );
         router.post(
             "/signin",
             Validator.validate(
                 LoginValidator.schema
             ),
-            SignIn.handle
+            AuthorizationSignIn.handle
         )
 
         return router;

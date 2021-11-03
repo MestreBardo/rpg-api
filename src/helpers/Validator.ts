@@ -31,6 +31,15 @@ class Validator {
     ) {
         return function (req: Request, res: Response, next: NextFunction) {
             try {
+                
+                if(!req[source])
+                    return HttpResponse.create(
+                        HttpStatus.badRequest,
+                        req,
+                        res,
+                        "Source is not present on request!"
+                    )
+
                 const { error } = joiSchema.validate(
                     req[source]
                 );
@@ -40,6 +49,7 @@ class Validator {
                 
                 const { details } = error;
 
+
                 return HttpResponse.create(
                     HttpStatus.badRequest,
                     req,
@@ -48,6 +58,7 @@ class Validator {
                 )
             } 
             catch (error: any) {
+                
                 return HttpResponse.create(
                     HttpStatus.internalServerError,
                     req,

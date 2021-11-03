@@ -5,6 +5,12 @@ import { JoiObjectId } from "../../../helpers/Validator";
 class GroupIdValidator {
     static schema = Joi.object({
         groupId: JoiObjectId()
+        .required()
+        .messages({
+            "any.invalid": "This id is not valid",
+            "any.required": "Id is required!",
+            "string.empty": "Id field is empty"
+        })
 
     }).unknown(true);
 }

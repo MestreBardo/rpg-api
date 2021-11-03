@@ -2,59 +2,42 @@ import { NextFunction, Request, Response } from "express";
 import { HttpStatus } from "../../../common/constants/HttpStatus.enum";
 import { RequestWithUser } from "../../../common/extended_types/express/Request.extended";
 import { HttpResponse } from "../../../common/responses/HttpResponse.factory";
-import { MemberMongoose } from "../../../database/models/Member.mongoose";
 import { GroupRepository } from "../../../database/repositories/Group.repository";
 import { MemberRepository } from "../../../database/repositories/Member.repository";
 import { UserRepository } from "../../../database/repositories/User.repository";
-import { GenerateMemberService } from "../../services/GenerateMember.service";
 
 class GroupJoin {
     static async handle(req: RequestWithUser, res: Response, next: NextFunction) {
         try {
 
-        
-            const { _id: userId } = req.user;
+            const user = req.user;
+            const group = req.group;
 
-            if (!userId)
+            if (!user || !group)
                 return HttpResponse.create(
-                    HttpStatus.badRequest,
+                    HttpStatus.internalServerError,
                     req,
                     res,
-                    "User not found in request"
-                );
-                
-            const { groupId } = req.params;
-            const memberOnDatabase = await MemberRepository.findByUserOnCampaign(
-                userId,
-                groupId,
-                true
-            )
-
-            if (memberOnDatabase)
-                return HttpResponse.create(
-                    HttpStatus.conflict,
-                    req,
-                    res,
-                    "User already exists on group"
+                    "Server have a error to process the request!"
                 );
             
-            const group = await GroupRepository.addMember(
-                groupId
-            );
-
-            const member = GenerateMemberService.execute({
-                user: userId,
-                group: groupId,
-                role: "user"
-            });
+            
 
             const createdMember = await MemberRepository.createOne(
-                member,
-                true
+                {
+                    user: user["_id"],
+                    group: group["_id"],
+                    role: "user",
+                    joinedAt: new Date()
+                }
             );
 
-            const user = await UserRepository.addGroup(
-                userId,
+            await GroupRepository.addMember(
+                group["_id"]
+            );
+
+            await UserRepository.addGroup(
+                user["_id"],
             )
 
             const { username, email } = user;
@@ -68,7 +51,7 @@ class GroupJoin {
                     user: {
                         username,
                         email,
-                        role: "user"
+                        role: createdMember["role"]
                     }
                 }
             )

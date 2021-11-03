@@ -17,6 +17,9 @@ class LoginValidator {
             }),
 
     })
+    .options({
+        abortEarly: false
+    })
 }
 
 export {

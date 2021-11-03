@@ -5,35 +5,37 @@ import { HttpResponse } from "../../../common/responses/HttpResponse.factory";
 import { GroupRepository } from "../../../database/repositories/Group.repository";
 import { MemberRepository } from "../../../database/repositories/Member.repository";
 import { UserRepository } from "../../../database/repositories/User.repository";
-import { GenerateGroupSevice } from "../../services/GenerateGroup.service";
-import { GenerateMemberService } from "../../services/GenerateMember.service";
 
 class GroupCreate {
     static async handle(req: RequestWithUser, res: Response, next: NextFunction) {
         try {
-            const { _id: userId } = req.user;
-
-            if (!userId)
+            const user = req.user;
+            const group = req.body;
+           
+            if (!user || !group)
                 return HttpResponse.create(
-                    HttpStatus.badRequest,
+                    HttpStatus.internalServerError,
                     req,
                     res,
-                    "User not found in request"
+                    "Server have a error to process the request!"
                 );
 
-            const groupReceived = req.body;
-            const group = GenerateGroupSevice.execute({
-                owner: userId,
-                ...groupReceived
+            const createdGroup = await GroupRepository.createOne({
+                owner: user["_id"],
+                ...group
             });
-            const createdGroup = await GroupRepository.createOne(group);
-            const member = GenerateMemberService.execute({
-                user: userId,
+
+            const member = await MemberRepository.createOne({
+                user: user["_id"],
                 group: createdGroup["_id"],
-                role: "owner"
+                role: "owner",
+                joinedAt: new Date()
             });
-            const { role } = await MemberRepository.createOne(member);
-            const { username, email } = await UserRepository.addGroup(userId);
+
+            await UserRepository
+                .addGroup(
+                    user["_id"]
+                );
 
             return HttpResponse.create(
                 HttpStatus.created,
@@ -42,9 +44,10 @@ class GroupCreate {
                 {
                     ...createdGroup,
                     user: {
-                        username,
-                        email,
-                        role
+                        _id: user["_id"],
+                        username: user["username"],
+                        email: user["email"],
+                        role: member["role"]
                     }
                 }
             )

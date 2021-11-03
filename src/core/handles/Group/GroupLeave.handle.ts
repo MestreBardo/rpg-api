@@ -9,47 +9,26 @@ import { UserRepository } from "../../../database/repositories/User.repository";
 class GroupLeave {
     static async handle(req: RequestWithUser, res: Response, next: NextFunction) {
         try {
-            const { _id: userId } = req.user;
+            const member = req.member;
+            const user = req.user;
+            const group = req.group;
 
-            if (!userId)
+            if (!member || !user || !group)
                 return HttpResponse.create(
-                    HttpStatus.badRequest,
+                    HttpStatus.internalServerError,
                     req,
                     res,
-                    "User not found in request"
+                    "Server have a error to process the request!"
                 );
-            
-            const { groupId } = req.params;
-            const memberOnDatabase = await MemberRepository.findByUserOnCampaign(
-                userId,
-                groupId,
-                true
+
+
+
+            await MemberRepository.removeMemberById(
+                member["_id"]
             );
 
-            if (!memberOnDatabase)
-                return HttpResponse.create(
-                    HttpStatus.gone,
-                    req,
-                    res,
-                    "User Alrealdy gone!"
-                );
-            
-
-            if (memberOnDatabase.role === "owner")
-                return HttpResponse.create(
-                    HttpStatus.conflict,
-                    req,
-                    res,
-                    "The owner can't leave group"
-                );
-
-            await MemberRepository.removeMember(
-                userId,
-                groupId
-            );
-
-            await GroupRepository.removeMember(groupId);
-            await UserRepository.removeGroup(userId);
+            await GroupRepository.removeMember(group["_id"]);
+            await UserRepository.removeGroup(user["_id"]);
 
             return HttpResponse.create(
                 HttpStatus.ok,

@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { ValidationSource } from '../../common/enums/ValidationSource.enum';
 import { JwtValidator } from '../../common/validators/Auth/Jwt.joi';
-import { GroupValidator } from '../../common/validators/Group/Group.joi';
+import { GroupCreateValidator } from '../../common/validators/Group/GroupCreate.joi';
 import { GroupIdValidator } from '../../common/validators/Group/GroupId.joi';
-import { CheckUserRole } from '../../core/handles/Member/CheckUserRole.handle';
+import { MemberAdminRole } from '../../core/handles/Member/MemberAdminRole';
 import { GroupCreate } from '../../core/handles/Group/GroupCreate.handle';
 import { GroupDemote } from '../../core/handles/Group/GroupDemote.handle';
 import { GroupDuplicity } from '../../core/handles/Group/GroupDuplicity.handle';
@@ -14,112 +14,107 @@ import { GroupRemove } from '../../core/handles/Group/GroupRemove.handle';
 import { JwtVerification } from '../../core/handles/Jwt/JwtVerification.handle';
 import { UserTokenFind } from '../../core/handles/User/UserTokenFind.handle';
 import { Validator } from '../../helpers/Validator';
-import { CheckMemberRole } from '../../core/handles/Member/CheckMemberRole.handle';
+import { MemberUpdateRole } from '../../core/handles/Member/MemberUpdateRole.handle';
 import { MemberIdValidator } from '../../common/validators/Member/MemberId.joi';
-import { GroupPutValidator } from '../../common/validators/Group/GroupPut.joi';
-import { GroupPut } from '../../core/handles/Group/GroupPut.handle';
-import { GroupPatchName } from '../../core/handles/Group/GroupPatchName.handle';
-import { GroupPatchNameValidator } from '../../common/validators/Group/GroupPatchName.joi';
+import { GroupUpdateValidator } from '../../common/validators/Group/GroupUpdate.joi';
+import { GroupUpdate } from '../../core/handles/Group/GroupUpdate.handle';
+import { GroupUpdateName } from '../../core/handles/Group/GroupUpdateName.handle';
+import { GroupUpdateNameValidator } from '../../common/validators/Group/GroupUpdateName.joi';
 import { GroupFindOne } from '../../core/handles/Group/GroupFindOne.handle';
 import { GroupFindMany } from '../../core/handles/Group/GroupFindMany.handle';
 import { GroupMembers } from '../../core/handles/Group/GroupMembers.handle';
+import { GroupFind } from '../../core/handles/Group/GroupFind.handle';
+import { MemberDuplicityGroup } from '../../core/handles/Member/MemberDuplicityGroup.handle';
+import { MemberFind } from '../../core/handles/Member/MemberFind.handle';
 
 
 class GroupsRoute {
     static create() {
         const router = Router();
 
-        router.get(
-            "/:groupId",
+        //JWT check authorization
+        router.use(
             Validator.validate(
                 JwtValidator.schema,
                 ValidationSource.HEADER
             ),
+            JwtVerification.handle,
+        )
+
+        //Get a single group by id
+        router.get(
+            "/:groupId",
             Validator.validate(
                 GroupIdValidator.schema,
                 ValidationSource.PARAMS
             ),
-            JwtVerification.handle,
             GroupFindOne.handle
         );
 
+        //Get a single group members
         router.get(
             "/:groupId/members",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
                 GroupIdValidator.schema,
                 ValidationSource.PARAMS
             ),
-            JwtVerification.handle,
+            GroupFind.handle(
+                ValidationSource.PARAMS
+            ),
             GroupMembers.handle
         );
 
+        //Get groups
         router.get(
             "",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            JwtVerification.handle,
             GroupFindMany.handle
         );
 
+        //Create a single group
         router.post(
             "",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
+                GroupCreateValidator.schema
             ),
-            Validator.validate(
-                GroupValidator.schema
-            ),
-            JwtVerification.handle,
-            GroupDuplicity.handle,
             UserTokenFind.handle,
+            GroupDuplicity.handle,
             GroupCreate.handle
         );
 
+        //Join group
         router.patch(
             "/:groupId/join",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
                 GroupIdValidator.schema,
                 ValidationSource.PARAMS
             ),
-            JwtVerification.handle,
             UserTokenFind.handle,
+            GroupFind.handle(
+                ValidationSource.PARAMS
+            ),
+            MemberDuplicityGroup.handle,
             GroupJoin.handle
         );
 
-
+        //Leave group
         router.delete(
             "/:groupId/leave",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
                 GroupIdValidator.schema,
                 ValidationSource.PARAMS
             ),
-            JwtVerification.handle,
             UserTokenFind.handle,
+            GroupFind.handle(
+                ValidationSource.PARAMS
+            ),
+            MemberFind.handle,
             GroupLeave.handle
         );
 
+        //Remove member group
         router.delete(
             "/:groupId/remove/:memberId",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
                 GroupIdValidator.schema,
                 ValidationSource.PARAMS
             ),
@@ -127,20 +122,20 @@ class GroupsRoute {
                 MemberIdValidator.schema,
                 ValidationSource.PARAMS
             ),
-            JwtVerification.handle,
             UserTokenFind.handle,
-            CheckUserRole.handle,
-            CheckMemberRole.handle,
+            GroupFind.handle(
+                ValidationSource.PARAMS
+            ),
+            MemberFind.handle,
+            MemberAdminRole.handle,
+            MemberUpdateRole.handle,
             GroupRemove.handle
         );
 
+        //Promote member group
         router.patch(
             "/:groupId/promote/:memberId",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
                 GroupIdValidator.schema,
                 ValidationSource.PARAMS
             ),
@@ -148,19 +143,19 @@ class GroupsRoute {
                 MemberIdValidator.schema,
                 ValidationSource.PARAMS
             ),
-            JwtVerification.handle,
             UserTokenFind.handle,
-            CheckUserRole.handle,
-            CheckMemberRole.handle,
+            GroupFind.handle(
+                ValidationSource.PARAMS
+            ),
+            MemberFind.handle,
+            MemberAdminRole.handle,
+            MemberUpdateRole.handle,
             GroupPromove.handle
         );
 
+        //Demote member group
         router.patch(
             "/:groupId/demote/:memberId",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
             Validator.validate(
                 GroupIdValidator.schema,
                 ValidationSource.PARAMS
@@ -169,50 +164,53 @@ class GroupsRoute {
                 MemberIdValidator.schema,
                 ValidationSource.PARAMS
             ),
-            JwtVerification.handle,
             UserTokenFind.handle,
-            CheckUserRole.handle,
-            CheckMemberRole.handle,
+            GroupFind.handle(
+                ValidationSource.PARAMS
+            ),
+            MemberFind.handle,
+            MemberAdminRole.handle,
+            MemberUpdateRole.handle,
             GroupDemote.handle
         );
 
+        //Update group
         router.put(
             "/:groupId",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
                 GroupIdValidator.schema,
                 ValidationSource.PARAMS
             ),
             Validator.validate(
-                GroupPutValidator.schema
+                GroupUpdateValidator.schema
             ),
-            JwtVerification.handle,
             UserTokenFind.handle,
-            CheckUserRole.handle,
-            GroupPut.handle
+            GroupFind.handle(
+                ValidationSource.PARAMS
+            ),
+            MemberFind.handle,
+            MemberAdminRole.handle,
+            GroupUpdate.handle
         );
 
+        //Update group name
         router.patch(
             "/:groupId/name",
             Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupPatchNameValidator.schema
+                GroupUpdateNameValidator.schema
             ),
             Validator.validate(
                 GroupIdValidator.schema,
                 ValidationSource.PARAMS
             ),
-            JwtVerification.handle,
-            GroupDuplicity.handle,
             UserTokenFind.handle,
-            CheckUserRole.handle,
-            GroupPatchName.handle
+            GroupFind.handle(
+                ValidationSource.PARAMS
+            ),
+            GroupDuplicity.handle,
+            MemberFind.handle,
+            MemberAdminRole.handle,
+            GroupUpdateName.handle
         )
 
 
