@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import { HttpStatus } from "../../../common/constants/HttpStatus.enum";
 import { RequestWithUser } from "../../../common/extended_types/express/Request.extended";
 import { HttpResponse } from "../../../common/responses/HttpResponse.factory";
-import { CheckPasswordService } from "../../services/CheckPassword.service";
+import { CheckPasswordService } from "../../services/user/CheckPassword.service";
 
 class UserCheckPassword {
     static async handle(req: RequestWithUser, res: Response, next: NextFunction) {

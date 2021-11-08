@@ -12,6 +12,15 @@ class CampaignRepository {
         return campaign.toJSON();
     }
 
+
+    static async findUserMasterActiveCampaignsByGroup(userId: string, groupId: string): Promise<Campaign[]> {
+        const campaigns = await CampaignMongoose.model.find({
+            group: groupId,
+            master: userId
+        });
+        return campaigns;
+    }
+
     static async removePlayer(campaignId: string) {
         const campaign = await CampaignMongoose.model.findById(
             campaignId

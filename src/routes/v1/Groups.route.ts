@@ -11,7 +11,7 @@ import { GroupJoin } from '../../core/handles/Group/GroupJoin.handle';
 import { GroupLeave } from '../../core/handles/Group/GroupLeave.handle';
 import { GroupPromove } from '../../core/handles/Group/GroupPromove.handle';
 import { GroupRemove } from '../../core/handles/Group/GroupRemove.handle';
-import { JwtVerification } from '../../core/handles/Jwt/JwtVerification.handle';
+import { JwtVerification, JwtVerificationMiddleware } from '../../core/handles/Jwt/JwtVerification.middleware';
 import { UserTokenFind } from '../../core/handles/User/UserTokenFind.handle';
 import { Validator } from '../../helpers/Validator';
 import { MemberUpdateRole } from '../../core/handles/Member/MemberUpdateRole.handle';
@@ -34,11 +34,7 @@ class GroupsRoute {
 
         //JWT check authorization
         router.use(
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            JwtVerification.handle,
+            JwtVerificationMiddleware.handle,
         )
 
         //Get a single group by id

@@ -4,7 +4,7 @@ import { JoiObjectId } from "../../../helpers/Validator";
 
 class MemberIdValidator {
     static schema = Joi.object({
-        memberId: JoiObjectId()
+        id: JoiObjectId()
         .required()
         .messages({
             "any.invalid": "This id is not valid",

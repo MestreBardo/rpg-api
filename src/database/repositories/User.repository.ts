@@ -30,8 +30,8 @@ class UserRepository {
         );
     }
 
-    static async addGroup(id: string): Promise<void> {
-        await UserMongoose.model.findByIdAndUpdate(
+    static async addGroup(id: string): Promise<User> {
+        const user = await UserMongoose.model.findByIdAndUpdate(
             {
                 _id: id
             },
@@ -40,12 +40,14 @@ class UserRepository {
                     groupCount: 1
                 }
             }
-        );
+        ).lean();
+
+        return user;
 
     }
 
-    static async removeGroup(id: string): Promise<void> {
-        await UserMongoose.model.findByIdAndUpdate(
+    static async removeGroup(id: string): Promise<User> {
+        const user = await UserMongoose.model.findByIdAndUpdate(
             {
                 _id: id
             },
@@ -54,7 +56,9 @@ class UserRepository {
                     groupCount: -1
                 }
             }
-        );
+        ).lean();
+
+        return user;
     }
     static async findByUsernameOrEmail(username: string, email: string): Promise<User> {
         username = username.toLowerCase();

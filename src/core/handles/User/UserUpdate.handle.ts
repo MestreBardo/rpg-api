@@ -3,7 +3,7 @@ import { HttpStatus } from "../../../common/constants/HttpStatus.enum";
 import { RequestWithUser } from "../../../common/extended_types/express/Request.extended";
 import { HttpResponse } from "../../../common/responses/HttpResponse.factory";
 import { UserRepository } from "../../../database/repositories/User.repository";
-import { CheckPasswordService } from "../../services/CheckPassword.service";
+import { CheckPasswordService } from "../../services/user/CheckPassword.service";
 import { GenerateJwtService } from "../../services/GenerateJwt.service";
 
 class UserUpdate {

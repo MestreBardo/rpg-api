@@ -21,11 +21,10 @@ app.use(cors())
 
 app.use(
     (err: any, req: Request, res: Response, next: NextFunction) => {
-        res.status(err.code || 500).json({
-            path: req.path,
+        res.status(err.statusCode || 500).json({
+            uri: req.url,
             method: req.method,
-            code: err.code || 500,
-            payload: err.payload
+            data: err.data || err.message || err.toString(),
         });
     }
 )

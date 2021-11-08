@@ -10,7 +10,8 @@ class CampaignMongoose {
     description: { type: String },
     master: { type: String, ref: 'User' },
     userCount: { type: Number },
-    createdAt: { type: Date, default: new Date() }
+    createdAt: { type: Date, default: new Date() },
+    active: { type: Boolean, default: true }
 
 
   })

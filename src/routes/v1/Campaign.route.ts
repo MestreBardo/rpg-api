@@ -13,7 +13,7 @@ import { CampaignLeave } from '../../core/handles/Campaign/CampaignLeave.handle'
 import { CampaignPatchName } from '../../core/handles/Campaign/CampaignPatchName.handle';
 import { CampaignPut } from '../../core/handles/Campaign/CampaignPut.handle';
 import { GroupFind } from '../../core/handles/Group/GroupFind.handle';
-import { JwtVerification } from '../../core/handles/Jwt/JwtVerification.handle';
+import { JwtVerification } from '../../core/handles/Jwt/JwtVerification.middleware';
 import { UserTokenFind } from '../../core/handles/User/UserTokenFind.handle';
 import { Validator } from '../../helpers/Validator';
 

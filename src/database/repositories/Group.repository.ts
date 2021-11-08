@@ -66,25 +66,36 @@ class GroupRepository {
         
         return group;
     }
-    static async addMember(id: string): Promise<void> {
-        await GroupMongoose.model.findByIdAndUpdate(
+    static async addMember(id: string): Promise<Group> {
+        const group = await GroupMongoose.model.findByIdAndUpdate(
             id,
             {
                 $inc: {
                     userCount: 1
                 }
+            },
+            {
+                new: true
             }
-        );
+        ).lean();
+
+        return group;
     }
-    static async removeMember(id: string): Promise<void> {
-        await GroupMongoose.model.findByIdAndUpdate(
+    static async removeMember(id: string): Promise<Group> {
+        const group = await GroupMongoose.model.findByIdAndUpdate(
             id,
             {
                 $inc: {
                     userCount: -1
                 }
+            },
+            {
+                new: true
             }
-        );
+
+        ).lean();
+
+        return group;
 
     }
 

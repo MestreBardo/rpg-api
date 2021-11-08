@@ -20,12 +20,21 @@ class PlayerRepository {
         
     }
 
-    // static async removeUser(memberId: string): Promise<void> {
-    //     await MemberMongoose.model.findByIdAndRemove(
-    //         memberId
-    //     );
+    static async findUserGroupActiveCampaigns(userId: string, groupId: string): Promise<any[]> {
+        const groups = await PlayerMongoose.model.find(
+            {
+                user: userId
+            }
+        ).populate('campaign', {
+            match: {
+                group: groupId,
+                active: true
+            }
+        }).lean();
 
-    // }
+        return groups;
+
+    }
 
    
 

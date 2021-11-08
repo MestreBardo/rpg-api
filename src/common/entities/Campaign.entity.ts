@@ -6,4 +6,5 @@ class Campaign {
     master: string;
     userCount: number;
     createdAt: Date;
+    active: boolean;
 }

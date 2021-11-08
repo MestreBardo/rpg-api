@@ -4,7 +4,7 @@ import { HttpResponse } from "../../../common/responses/HttpResponse.factory";
 import { UserRepository } from "../../../database/repositories/User.repository";
 import { GenerateJwtService } from "../../services/GenerateJwt.service";
 import { GeneratePasswordService } from "../../services/GeneratePassword.service";
-import { GenerateUserSevice } from "../../services/GenerateUser.service";
+import { GenerateUserSevice } from "../../services/user/GenerateUser.service";
 
 class AuthorizationSignUp {
     static async handle(req: Request, res: Response, next: NextFunction) {

@@ -94,7 +94,7 @@ class MemberRepository {
     }
     
 
-    static async findByUserOnCampaign(user: string, group: string): Promise<Member> {
+    static async findByUserOnGroup(user: string, group: string): Promise<Member> {
         const member = await MemberMongoose.model.findOne(
             {
                 user,

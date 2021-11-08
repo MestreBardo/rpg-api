@@ -2,7 +2,7 @@ import { NextFunction, Response, Request } from "express";
 import { HttpStatus } from "../../../common/constants/HttpStatus.enum";
 import { HttpResponse } from "../../../common/responses/HttpResponse.factory";
 import { UserRepository } from "../../../database/repositories/User.repository";
-import { CheckPasswordService } from "../../services/CheckPassword.service";
+import { CheckPasswordService } from "../../services/user/CheckPassword.service";
 import { GenerateJwtService } from "../../services/GenerateJwt.service";
 
 class AuthorizationSignIn {

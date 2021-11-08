@@ -1,22 +1,11 @@
 import { Router } from 'express';
-import { ValidationSource } from '../../common/enums/ValidationSource.enum';
-import { JwtValidator } from '../../common/validators/Auth/Jwt.joi';
-import { UserIdValidator } from '../../common/validators/User/UserId.joi';
-import { UserUpdateValidator } from '../../common/validators/User/UserUpdate.joi';
-import { JwtVerification } from '../../core/handles/Jwt/JwtVerification.handle';
-import { UserFindOne } from '../../core/handles/User/UserFindOne.handle';
-import { UserUpdate } from '../../core/handles/User/UserUpdate.handle';
-import { Validator } from '../../helpers/Validator';
-import { UserEmailUpdate } from '../../core/handles/User/UserUpdateEmail.handle';
-import { UserPasswordUpdate } from '../../core/handles/User/UserPasswordUpdate.handle';
-import { UserUsernameUpdate } from '../../core/handles/User/UserUsernameUpdate.handle';
-import { UserUpdateEmailValidator } from '../../common/validators/User/UserUpdateEmail.joi';
-import { UserUpdatePasswordValidator } from '../../common/validators/User/UserUpdatePassword.joi';
-import { UserUpdateUsernameValidator } from '../../common/validators/User/UserUpdateUsename.joi';
-import { UserDuplicity } from '../../core/handles/User/UserDuplicity.handle';
-import { UserTokenFind } from '../../core/handles/User/UserTokenFind.handle';
-import { UserFindMe } from '../../core/handles/User/UserFindMe.handle';
-import { UserCheckPassword } from '../../core/handles/User/UserCheckPassword.handle';
+import { JwtVerificationMiddleware } from '../../core/handles/Jwt/JwtVerification.middleware';
+import { UpdateUserController } from '../../controllers/user/UpdateUser.controller';
+import { UpdateUserEmailController } from '../../controllers/user/UpdateUserEmail.controller';
+import { UpdateUserUsernameController } from '../../controllers/user/UpdateUserUsername.controller';
+import { UpdateUserPasswordController } from '../../controllers/user/UpdateUserPassword.controller';
+import { RetrieveUserController } from '../../controllers/user/RetrieveUser.controller';
+import { RetrieveUserSignedController } from '../../controllers/user/RetrieveUserSigned.controller';
 
 class UsersRoute {
     static create() {
@@ -24,75 +13,44 @@ class UsersRoute {
 
         //JWT check authorization
         router.use(
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            JwtVerification.handle,
+            JwtVerificationMiddleware.handle,
         )
 
         //Get token sender user
         router.get(
             "/me",
-            UserFindMe.handle
+            RetrieveUserSignedController.handle
         );
 
         //Get a single user
         router.get(
             "/:userId",
-            Validator.validate(
-                UserIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            UserFindOne.handle
+            RetrieveUserController.handle
         );
 
-        
-        
+    
         //Update user
         router.put(
             "",
-            Validator.validate(
-                UserUpdateValidator.schema
-            ),
-            UserTokenFind.handle,
-            UserCheckPassword.handle,
-            UserUpdate.handle
+            UpdateUserController.handle
         );
 
         //Update user email
         router.patch(
             "/email",
-            Validator.validate(
-                UserUpdateEmailValidator.schema
-            ),
-            UserDuplicity.handle,
-            UserTokenFind.handle,
-            UserCheckPassword.handle,
-            UserEmailUpdate.handle
+            UpdateUserEmailController.handle
         );
 
         //Update user password
         router.patch(
             "/password",
-            Validator.validate(
-                UserUpdatePasswordValidator.schema
-            ),
-            UserTokenFind.handle,
-            UserCheckPassword.handle,
-            UserPasswordUpdate.handle
+            UpdateUserPasswordController.handle
         );
 
         //Update user username
         router.patch(
             "/username",
-            Validator.validate(
-                UserUpdateUsernameValidator.schema
-            ),
-            UserTokenFind.handle,
-            UserDuplicity.handle,
-            UserCheckPassword.handle,
-            UserUsernameUpdate.handle
+            UpdateUserUsernameController.handle
         );
 
 
