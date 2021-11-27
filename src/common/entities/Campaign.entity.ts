@@ -8,3 +8,5 @@ class Campaign {
     createdAt: Date;
     active: boolean;
 }
+
+export { Campaign };

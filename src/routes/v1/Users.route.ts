@@ -6,6 +6,7 @@ import { UpdateUserUsernameController } from '../../controllers/user/UpdateUserU
 import { UpdateUserPasswordController } from '../../controllers/user/UpdateUserPassword.controller';
 import { RetrieveUserController } from '../../controllers/user/RetrieveUser.controller';
 import { RetrieveUserSignedController } from '../../controllers/user/RetrieveUserSigned.controller';
+import { RetrieveUserSignedGroupsController } from '../../controllers/user/RetrieveUserSignedGroups.controller';
 
 class UsersRoute {
     static create() {
@@ -20,6 +21,12 @@ class UsersRoute {
         router.get(
             "/me",
             RetrieveUserSignedController.handle
+        );
+
+
+        router.get(
+            "/groups",
+            RetrieveUserSignedGroupsController.handle
         );
 
         //Get a single user

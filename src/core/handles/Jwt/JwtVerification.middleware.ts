@@ -17,9 +17,9 @@ class JwtVerificationMiddleware {
         verify(
             token,
             process.env.TOKEN, 
-            (err, decoded) => {
+            async (err, decoded) => {
                 if(err) throw new HttpError(HttpStatus.UNAUTHORIZED, err.message);
-                const user = RetrieveUserService.execute(decoded.sub);
+                const user = await RetrieveUserService.execute(decoded.sub);
                 req.user = user;
                 next();
             }

@@ -1,4 +1,5 @@
 import { model as Model, Schema } from "mongoose";
+import { Campaign } from "../../common/entities/Campaign.entity";
 
 class CampaignMongoose {
 
@@ -9,7 +10,7 @@ class CampaignMongoose {
     system: { type: String },
     description: { type: String },
     master: { type: String, ref: 'User' },
-    userCount: { type: Number },
+    userCount: { type: Number, defaultq: 0 },
     createdAt: { type: Date, default: new Date() },
     active: { type: Boolean, default: true }
 

@@ -19,7 +19,7 @@ class CreateGroupService {
         const createdMember = await MemberRepository.createOne(newMember);
         await UserRepository.addGroup(createdMember["user"]);
         return {
-            ...newGroup,
+            ...createdGroup,
             me: createdMember
         }
     }

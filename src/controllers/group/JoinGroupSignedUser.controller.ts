@@ -7,7 +7,7 @@ import { HttpSendService } from '../../core/services/HttpSend.service';
 import { Validator } from '../../helpers/Validator';
 
 class JoinGroupSignedUserController {
-    static async execute(req: RequestWithUser, res: Response, next: NextFunction){
+    static async handle(req: RequestWithUser, res: Response, next: NextFunction){
         try {
             const user = req.user;
             const group = {id: req.params["groupId"]};

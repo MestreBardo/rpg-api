@@ -21,6 +21,48 @@ class MemberRepository {
         
     }
 
+    static async findGroupsByUser(userId: string): Promise<Member[]> {
+        const members = await MemberMongoose.model.find(
+            {
+                user: userId
+            }
+        )
+        .populate(
+            {
+                path:"group",
+                select: "_id name description userCount"
+            }
+        )
+        .lean();
+
+        return members;
+    }
+
+    static async findByGroup(group: string, username: string, page: number = 1): Promise<Member[]> {
+        const members = await MemberMongoose.model.find(
+            {
+                group
+            }
+        )
+        .populate(
+            {
+                path:"user",
+                match: {
+                    username: new RegExp(username, "i")
+                },
+                select: "_id username name surname email"
+            }
+        )
+        .skip(
+            (page - 1) * 20
+        ).limit(
+            20
+        )
+        .lean();
+
+        return members;
+    }
+
     static async removeUser(id: string): Promise<void> {
         await MemberMongoose.model.findByIdAndRemove(
             id

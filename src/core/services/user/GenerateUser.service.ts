@@ -17,6 +17,8 @@ class GenerateUserSevice {
             external 
         } = args;
 
+        console.log(password);
+
         const hashedPassword = await hash(password, 10);
 
         const user = new UserBuilder(email)

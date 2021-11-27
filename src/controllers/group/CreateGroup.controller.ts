@@ -1,4 +1,5 @@
 import { Response, NextFunction } from 'express';
+import { body } from 'express-validator';
 import { HttpStatus } from '../../common/constants/HttpStatus.enum';
 import { RequestWithUser } from '../../common/extended_types/express/Request.extended';
 import { GroupCreateValidator } from '../../common/validators/Group/GroupCreate.joi';
@@ -11,10 +12,13 @@ class CreateGroupController {
         try {
             const user = req.user;
             const receivedGroup = req.body;
+            console.log(req.body);
+           
             Validator.validate(GroupCreateValidator.schema, receivedGroup);
             const createdGroup = await CreateGroupService.execute(user, receivedGroup);
             HttpSendService.execute(req, res, HttpStatus.CREATED, createdGroup)
         } catch (error) {
+            console.log(error);
             next(error);
         }
     }

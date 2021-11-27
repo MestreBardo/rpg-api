@@ -19,6 +19,7 @@ class GroupRepository {
             20
         ).lean();
 
+
         return groups
     }
     static async updateOne(id: string, groupUpdate: Group): Promise<Group> {
@@ -39,11 +40,12 @@ class GroupRepository {
                 new: true
             }
         )
+        .populate('owner', '_id username')
         .lean();
 
         return updatedGroup;
     }
-    static async patchName(id: string, name: any): Promise<Group> {
+    static async updateName(id: string, name: any): Promise<Group> {
         const group = await GroupMongoose.model.findByIdAndUpdate(
             id,
             {
@@ -55,6 +57,7 @@ class GroupRepository {
                 new: true
             }
         )
+        .populate('owner', '_id username')
         .lean();
         return group;
     }
@@ -62,6 +65,7 @@ class GroupRepository {
         const group = await GroupMongoose.model.findById(
             groupId
         )
+        .populate('owner', '_id username')
         .lean();
         
         return group;

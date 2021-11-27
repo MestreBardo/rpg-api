@@ -7,10 +7,10 @@ import { UserRepository } from '../../../database/repositories/User.repository';
 class VerifyUserService {
     static async execute(user: any, receivedPassword: string): Promise<User> {
         const userInDatabase = await UserRepository.findByUsernameOrEmail(user.login, user.login);
-        if (!user) {
+        if (!userInDatabase) {
             throw new HttpError(HttpStatus.NOTFOUND, 'User not found');
         };
-        const isMatch = await compare(receivedPassword, user.password);
+        const isMatch = await compare(receivedPassword, userInDatabase.password);
         if (!isMatch) {
             throw new HttpError(HttpStatus.UNAUTHORIZED, 'Invalid password');
         };

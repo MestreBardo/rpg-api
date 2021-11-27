@@ -9,7 +9,7 @@ class UpdateUserEmailService {
         const userInDatabase = await UserRepository.findByUsernameOrEmail(update.email, update.email);
         if (userInDatabase) throw new HttpError(HttpStatus.CONFLICT, 'Email already in use');
 
-        const isMatch = await compare(user.password, update.confirmationPassword);
+        const isMatch = await compare(update.confirmationPassword, user.password);
         if (!isMatch) throw new HttpError(HttpStatus.UNAUTHORIZED, 'Password does not match');
 
         const updatedUser = await UserRepository.updateEmailById(user["_id"], update["email"]);

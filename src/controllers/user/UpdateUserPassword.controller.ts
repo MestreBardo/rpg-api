@@ -9,12 +9,19 @@ import { Validator } from '../../helpers/Validator';
 
 class UpdateUserPasswordController {
     static async handle(req: RequestWithUser, res: Response, next: NextFunction) {
-        const user = req.user;
-        const receivedUserUpdate = req.body;
-        Validator.validate(UserUpdatePasswordValidator.schema, receivedUserUpdate);
-        const updatedUser = await UpdateUserPasswordService.execute(user, receivedUserUpdate);
-        const token = GenerateJwtService.execute(updatedUser);
-        HttpSendService.execute(req, res, HttpStatus.OK, token);
+        try {
+            const user = req.user;
+            const receivedUserUpdate = req.body;
+            Validator.validate(UserUpdatePasswordValidator.schema, receivedUserUpdate);
+            const updatedUser = await UpdateUserPasswordService.execute(user, receivedUserUpdate);
+            const token = GenerateJwtService.execute(updatedUser);
+            HttpSendService.execute(req, res, HttpStatus.OK, token);
+            
+        } catch (error) {
+            next(error);
+        }
+            
+        
     }
 }
 

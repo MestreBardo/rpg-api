@@ -12,8 +12,74 @@ class CampaignRepository {
         return campaign.toJSON();
     }
 
+    static async findByNameInGroup(name: string, groupId: string): Promise<any> { 
+        const campaign = await CampaignMongoose.model.findOne({
+            group: groupId,
+            name
+        })
+        .lean();
 
-    static async findUserMasterActiveCampaignsByGroup(userId: string, groupId: string): Promise<Campaign[]> {
+        return campaign;
+    }
+
+    static async create(receivedCampaign: any): Promise<any> {
+        const campaign = new CampaignMongoose.model(receivedCampaign);
+        await campaign.save();
+        return campaign.toJSON();
+    };
+
+    static async updateName(campaignId: string, name: string): Promise<any> {
+        const updatedGroup = await CampaignMongoose.model.findByIdAndUpdate(
+            campaignId,
+            {
+                $set: {
+                    name
+                }
+            },
+            {
+                new: true
+            }
+        )
+        .populate('master', '_id username')
+        .lean();
+        return updatedGroup;
+    }
+
+    static async updateOne(id: string, campaignUpdate: any): Promise<any> {
+        Object.keys(campaignUpdate).forEach(
+            key => {
+                if (!campaignUpdate[key])
+                    delete campaignUpdate[key];
+            }
+        )
+        const updatedGroup = await CampaignMongoose.model.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    ...campaignUpdate
+                }
+            },
+            {
+                new: true
+            }
+        )
+        .populate('master', '_id username')
+        .lean();
+
+        return updatedGroup;
+    }
+
+    static async findManyByGroup(groupId: string): Promise<any[]> {
+        const campaigns = await CampaignMongoose.model.find({
+            group: groupId
+        })
+        .lean();
+
+        return campaigns;
+    }
+
+
+    static async findUserMasterActiveCampaignsByGroup(userId: string, groupId: string): Promise<any[]> {
         const campaigns = await CampaignMongoose.model.find({
             group: groupId,
             master: userId
@@ -31,28 +97,17 @@ class CampaignRepository {
 
         return campaign.toJSON();
     }
-    static async findById(campaignId: string): Promise<Campaign> {
+    static async findById(campaignId: string): Promise<any> {
         const campaign = await CampaignMongoose.model.findById(
             campaignId
         )
+        .populate('master', '_id username')
         .lean();
 
         return campaign;
     }
-    static async updateOne(campaignId: string, campaignReceived: Campaign): Promise<Campaign> {
-        const { description, system } = campaignReceived;
-        const campaign = await CampaignMongoose.model.findById(
-            campaignId
-        );
-
-        campaign.description = description || campaign.description;
-        campaign.system = system || campaign.system;
-
-        await campaign.save();
-
-        return campaign.toJSON();
-    }
-    static async patchName(campaignId: string, name: string): Promise<Campaign> {
+ 
+    static async patchName(campaignId: string, name: string): Promise<any> {
         const campaign = await CampaignMongoose.model.findById(
             campaignId
         );
@@ -63,12 +118,12 @@ class CampaignRepository {
 
         return campaign.toJSON();
     }
-    static async createOne(campaign: Campaign): Promise<Campaign> {
+    static async createOne(campaign: any): Promise<any> {
         const newCampaign = new CampaignMongoose.model(campaign);
         await newCampaign.save();
         return newCampaign.toJSON();
     }
-    static async findByNameAndGroup(groupId: string, name: string): Promise<Campaign> {
+    static async findByNameAndGroup(groupId: string, name: string): Promise<any> {
         const campaign = await CampaignMongoose.model.findOne({
             group: groupId,
             name

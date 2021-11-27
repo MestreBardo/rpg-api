@@ -10,6 +10,7 @@ class SigninController {
     static async handle(req: Request, res: Response, next: NextFunction) {
         try {
             const receivedLogin = req.body;
+            console.log(receivedLogin);
             Validator.validate(LoginValidator.schema, receivedLogin);
             const user = await VerifyUserService.execute(receivedLogin, receivedLogin.password);
             const token = GenerateJwtService.execute(user);

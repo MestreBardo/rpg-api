@@ -4,6 +4,8 @@ import cors from 'cors';
 
 const app = express();
 
+app.use(cors());
+
 app.use(
     express.json(
         {
@@ -17,7 +19,7 @@ app.use(
     Routes.create()
 );
 
-app.use(cors())
+
 
 app.use(
     (err: any, req: Request, res: Response, next: NextFunction) => {

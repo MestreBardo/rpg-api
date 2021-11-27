@@ -7,7 +7,7 @@ import { UserRepository } from '../../../database/repositories/User.repository';
 class UpdateUserPasswordService {
     static async execute(user: User, update: any): Promise<User> {
 
-        const isMatch = await compare(user.password, update.confirmationPassword);
+        const isMatch = await compare(update.confirmationPassword, user.password);
         if (!isMatch) throw new HttpError(HttpStatus.UNAUTHORIZED, 'Password does not match');
 
         const updatedUser = await UserRepository.updatePasswordById(user["_id"], update["password"]);

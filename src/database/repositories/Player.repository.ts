@@ -20,6 +20,18 @@ class PlayerRepository {
         
     }
 
+    static async findByUser(user: string): Promise<Player> {
+        const player = await PlayerMongoose.model.findOne(
+            {
+                user
+            }
+        )
+        .lean();
+
+        return player;
+
+    }
+
     static async findUserGroupActiveCampaigns(userId: string, groupId: string): Promise<any[]> {
         const groups = await PlayerMongoose.model.find(
             {
@@ -60,7 +72,7 @@ class PlayerRepository {
     //     return members;
     // }
 
-    static async createOne(player: Player): Promise<Player> {
+    static async createOne(player: any): Promise<Player> {
         const createdPlayer = new PlayerMongoose.model(player);
         await createdPlayer.save();
 
