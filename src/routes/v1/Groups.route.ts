@@ -1,218 +1,97 @@
 import { Router } from 'express';
-import { ValidationSource } from '../../common/enums/ValidationSource.enum';
-import { JwtValidator } from '../../common/validators/Auth/Jwt.joi';
-import { GroupValidator } from '../../common/validators/Group/Group.joi';
-import { GroupIdValidator } from '../../common/validators/Group/GroupId.joi';
-import { CheckUserRole } from '../../core/handles/Member/CheckUserRole.handle';
-import { GroupCreate } from '../../core/handles/Group/GroupCreate.handle';
-import { GroupDemote } from '../../core/handles/Group/GroupDemote.handle';
-import { GroupDuplicity } from '../../core/handles/Group/GroupDuplicity.handle';
-import { GroupJoin } from '../../core/handles/Group/GroupJoin.handle';
-import { GroupLeave } from '../../core/handles/Group/GroupLeave.handle';
-import { GroupPromove } from '../../core/handles/Group/GroupPromove.handle';
-import { GroupRemove } from '../../core/handles/Group/GroupRemove.handle';
-import { JwtVerification } from '../../core/handles/Jwt/JwtVerification.handle';
-import { UserTokenFind } from '../../core/handles/User/UserTokenFind.handle';
-import { Validator } from '../../helpers/Validator';
-import { CheckMemberRole } from '../../core/handles/Member/CheckMemberRole.handle';
-import { MemberIdValidator } from '../../common/validators/Member/MemberId.joi';
-import { GroupPutValidator } from '../../common/validators/Group/GroupPut.joi';
-import { GroupPut } from '../../core/handles/Group/GroupPut.handle';
-import { GroupPatchName } from '../../core/handles/Group/GroupPatchName.handle';
-import { GroupPatchNameValidator } from '../../common/validators/Group/GroupPatchName.joi';
-import { GroupFindOne } from '../../core/handles/Group/GroupFindOne.handle';
-import { GroupFindMany } from '../../core/handles/Group/GroupFindMany.handle';
-import { GroupMembers } from '../../core/handles/Group/GroupMembers.handle';
+import { CreateGroupController } from '../../controllers/group/CreateGroup.controller';
+import { DemoteMemberController } from '../../controllers/group/DemoteMember.controller';
+import { JoinGroupSignedUserController } from '../../controllers/group/JoinGroupSignedUser.controller';
+import { LeaveGroupSignedUserController } from '../../controllers/group/LeaveGroupSignedUser.controller';
+import { PromoteMemberController } from '../../controllers/group/PromoteMember.controller';
+import { RetrieveGroupController } from '../../controllers/group/RetrieveGroup.controller';
+import { RetrieveGroupCampaignsController } from '../../controllers/group/RetrieveGroupCampaigns.controller';
+import { RetrieveGroupMembersController } from '../../controllers/group/RetrieveGroupMembers.controller';
+import { RetrieveGroupsController } from '../../controllers/group/RetrieveGroups.controller';
+import { UpdateGroupController } from '../../controllers/group/UpdateGroup.controller';
+import { UpdateGroupNameController } from '../../controllers/group/UpdateGroupName.controller';
+import { JwtVerificationMiddleware } from '../../core/handles/Jwt/JwtVerification.middleware';
+import { CreateGroupService } from '../../core/services/group/CreateGroup.service';
 
 
 class GroupsRoute {
     static create() {
         const router = Router();
 
+        //JWT check authorization
+        router.use(
+            JwtVerificationMiddleware.handle,
+        )
+
+        //Get a single group by id
         router.get(
-            "/:groupId",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            JwtVerification.handle,
-            GroupFindOne.handle
+            "/:id",
+            RetrieveGroupController.handle
         );
 
         router.get(
-            "/:groupId/members",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            JwtVerification.handle,
-            GroupMembers.handle
+            "/:id/campaigns",
+            RetrieveGroupCampaignsController.handle
         );
 
+        //Get a single group members
+        router.get(
+            "/:id/members",
+            RetrieveGroupMembersController.handle
+        );
+
+        //Get groups
         router.get(
             "",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            JwtVerification.handle,
-            GroupFindMany.handle
+            RetrieveGroupsController.handle
         );
 
+        //Create a single group
         router.post(
             "",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupValidator.schema
-            ),
-            JwtVerification.handle,
-            GroupDuplicity.handle,
-            UserTokenFind.handle,
-            GroupCreate.handle
+            CreateGroupController.handle
         );
 
+        //Join group
         router.patch(
             "/:groupId/join",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            JwtVerification.handle,
-            UserTokenFind.handle,
-            GroupJoin.handle
+            JoinGroupSignedUserController.handle
         );
 
-
+        //Leave group
         router.delete(
             "/:groupId/leave",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            JwtVerification.handle,
-            UserTokenFind.handle,
-            GroupLeave.handle
+            LeaveGroupSignedUserController.handle
         );
 
-        router.delete(
-            "/:groupId/remove/:memberId",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            Validator.validate(
-                MemberIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            JwtVerification.handle,
-            UserTokenFind.handle,
-            CheckUserRole.handle,
-            CheckMemberRole.handle,
-            GroupRemove.handle
-        );
+        //Remove member group
+        // router.delete(
+        //     "/:groupId/remove/:memberId",
+        //     Rem.handle
+        // );
 
+        //Promote member group
         router.patch(
             "/:groupId/promote/:memberId",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            Validator.validate(
-                MemberIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            JwtVerification.handle,
-            UserTokenFind.handle,
-            CheckUserRole.handle,
-            CheckMemberRole.handle,
-            GroupPromove.handle
+            PromoteMemberController.handle
         );
 
+        //Demote member group
         router.patch(
             "/:groupId/demote/:memberId",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            Validator.validate(
-                MemberIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            JwtVerification.handle,
-            UserTokenFind.handle,
-            CheckUserRole.handle,
-            CheckMemberRole.handle,
-            GroupDemote.handle
+            DemoteMemberController.handle
         );
 
+        //Update group
         router.put(
-            "/:groupId",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            Validator.validate(
-                GroupPutValidator.schema
-            ),
-            JwtVerification.handle,
-            UserTokenFind.handle,
-            CheckUserRole.handle,
-            GroupPut.handle
+            "/:id",
+            UpdateGroupController.handle
         );
 
+        //Update group name
         router.patch(
-            "/:groupId/name",
-            Validator.validate(
-                JwtValidator.schema,
-                ValidationSource.HEADER
-            ),
-            Validator.validate(
-                GroupPatchNameValidator.schema
-            ),
-            Validator.validate(
-                GroupIdValidator.schema,
-                ValidationSource.PARAMS
-            ),
-            JwtVerification.handle,
-            GroupDuplicity.handle,
-            UserTokenFind.handle,
-            CheckUserRole.handle,
-            GroupPatchName.handle
+            "/:id/name",
+            UpdateGroupNameController.handle
         )
 
 

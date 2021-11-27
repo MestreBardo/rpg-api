@@ -1,29 +1,66 @@
 import { hash } from 'bcrypt';
 import { User } from './../../common/entities/User.entity';
 import { UserMongoose } from "../models/User.mongoose"
+import { networkmanagement } from 'googleapis/build/src/apis/networkmanagement';
 
 class UserRepository {
-
-    static async addGroup(userId: string): Promise<User> {
-        const user = await UserMongoose.model.findById(
-            userId
-        )
-        user.groupCount++;
-        await user.save();
-
-        return user.toJSON();
+    static async addCampaign(id: string): Promise<void> {
+        await UserMongoose.model.findByIdAndUpdate(
+            {
+                _id: id
+            },
+            {
+                $inc: {
+                    campaingCount: 1
+                }
+            }
+        );
     }
 
-    static async removeGroup(userId: string): Promise<User> {
-        const user = await UserMongoose.model.findById(
-            userId
-        )
-        user.groupCount--;
-        await user.save();
-
-        return user.toJSON();
+    static async removeCampaign(id: string): Promise<void> {
+        await UserMongoose.model.findByIdAndUpdate(
+            {
+                _id: id
+            },
+            {
+                $inc: {
+                    campaingCount: -1
+                }
+            }
+        );
     }
-    static async findByUsernameOrEmail(username: string, email: string, lean: boolean = false): Promise<User> {
+
+    static async addGroup(id: string): Promise<User> {
+        const user = await UserMongoose.model.findByIdAndUpdate(
+            {
+                _id: id
+            },
+            {
+                $inc: {
+                    groupCount: 1
+                }
+            }
+        ).lean();
+
+        return user;
+
+    }
+
+    static async removeGroup(id: string): Promise<User> {
+        const user = await UserMongoose.model.findByIdAndUpdate(
+            {
+                _id: id
+            },
+            {
+                $inc: {
+                    groupCount: -1
+                }
+            }
+        ).lean();
+
+        return user;
+    }
+    static async findByUsernameOrEmail(username: string, email: string): Promise<User> {
         username = username.toLowerCase();
         email = email.toLowerCase(); 
         const user = await UserMongoose.model.findOne(
@@ -34,10 +71,8 @@ class UserRepository {
                 ]
             }
         )
-
-        if (lean && user)
-            return user.toJSON();
-
+        .lean();
+        
         return user;
     }
 
@@ -62,85 +97,108 @@ class UserRepository {
         return user;
     }
 
-    static async findOneById(id: string, lean: boolean = false): Promise<User> {
+    static async findOneById(id: string): Promise<User> {
         const user = await UserMongoose.model.findById(
             id
-        );
-        if (lean && user)
-            return user.toJSON();
+        )
+        .lean();
 
         return user;
     }
 
     static async updateOneById(id: string, user: any): Promise<User> {
-        const {
-            name,
-            surname,
-            birthday,
-            city,
-            country,
-            gender
-        } = user;
 
-        const userUpdated = await UserMongoose.model.findById(
-            id
-        );
+        Object.keys(user).forEach(
+            (key: any) => {
+                if(!user[key])
+                    delete user[key];
+            }
+        )
 
-        userUpdated.name = name || userUpdated.name;
-        userUpdated.surname = surname || userUpdated.surname;
-        userUpdated.birthday = birthday || userUpdated.birthday;
-        userUpdated.city = city || userUpdated.city;
-        userUpdated.country = country || userUpdated.country;
-        userUpdated.gender = gender || userUpdated.gender;
+        const userUpdated = await UserMongoose.model.findOneAndUpdate(
+            {
+                _id: id
+            },
+            {
+                $set: {
+                    ...user
+                }
+            },
+            {
+                new: true
+            }
+        )
+        .select("-password")
+        .lean();
 
-        await userUpdated.save();
-
-        return userUpdated.toJSON();
-
-    }
-
-    static async updateUsernameById(id: string, user: any): Promise<User> {
-        const { username } = user;
-        const userUpdated = await UserMongoose.model.findById(
-            id
-        );
-
-        userUpdated.username = username;
-
-        await userUpdated.save();
-
-        return userUpdated.toJSON();
+        return userUpdated;
 
     }
 
+    static async updateUsernameById(id: string, username: string): Promise<User> {
+        const updatedUser = await UserMongoose.model.findOneAndUpdate(
+            {
+                _id: id,
+            },
+            {
+                $set: {
+                    username: username
+                }
+            },
+            {
+                new: true
+            }
+        )
+        .select("-password")
+        .lean();
 
-    static async updateEmailById(id: string, user: any): Promise<User> {
-        const { email } = user;
-        const userUpdated = await UserMongoose.model.findById(
-            id
-        );
-
-        userUpdated.email = email;
-
-        await userUpdated.save();
-
-        return userUpdated.toJSON();
+        return updatedUser;
 
     }
 
 
-    static async updatePasswordById(id: string, user: any): Promise<User> {
-        const { password } = user;
+    static async updateEmailById(id: string, email: string): Promise<User> {
+        const updatedUser = await UserMongoose.model.findOneAndUpdate(
+            {
+                _id: id,
+            },
+            {
+                $set: {
+                    email: email
+                }
+            },
+            {
+                new: true
+            }
+        )
+        .select("-password")
+        .lean();
+
+        return updatedUser;
+
+    }
+
+
+    static async updatePasswordById(id: string, password: string): Promise<User> {
         const hashedPassword = await hash(password, 10);
-        const userUpdated = await UserMongoose.model.findById(
-            id
-        );
+        const updatedUser = await UserMongoose.model.findByIdAndUpdate(
+            {
+                _id: id
+            },
+            {
+                $set: {
+                    password: hashedPassword
+                }
+            },
+            {
+                new: true
+            }
+        )
+        .select("-password")
+        .lean();
 
-        userUpdated.password = hashedPassword;
 
-        await userUpdated.save();
-
-        return userUpdated.toJSON();
+        return updatedUser;
 
     }
 
@@ -160,7 +218,7 @@ class UserRepository {
     }
 
     static async createOne(user: User): Promise<User> {
-        const newUser = await UserMongoose.model.create(user);
+        const newUser = new UserMongoose.model(user);
         await newUser.save();
 
         return newUser.toJSON();

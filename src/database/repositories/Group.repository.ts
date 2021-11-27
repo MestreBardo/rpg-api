@@ -2,7 +2,7 @@ import { Group } from "../../common/entities/Group.entity";
 import { GroupMongoose } from "../models/Group.mongoose";
 
 class GroupRepository {
-    static async findByMany(name: string, page: number, lean: boolean = false): Promise<Group[]> {
+    static async findMany(name: string, page: number): Promise<Group[]> {
         const nameRegex = new RegExp(name, "ig")
         const groups = await GroupMongoose.model.find(
             {name: nameRegex}
@@ -19,80 +19,106 @@ class GroupRepository {
             20
         ).lean();
 
+
         return groups
     }
-    static async updateOne(groupId: string, groupReceived: Group): Promise<Group> {
-        const { description, isPublic, system } = groupReceived;
-        const group = await GroupMongoose.model.findById(
-            groupId
-        );
+    static async updateOne(id: string, groupUpdate: Group): Promise<Group> {
+        Object.keys(groupUpdate).forEach(
+            key => {
+                if (!groupUpdate[key])
+                    delete groupUpdate[key];
+            }
+        )
+        const updatedGroup = await GroupMongoose.model.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    ...groupUpdate
+                }
+            },
+            {
+                new: true
+            }
+        )
+        .populate('owner', '_id username')
+        .lean();
 
-        group.description = description || group.description;
-        group.isPublic = isPublic ?? group.isPublic;
-        group.system = system || group.system;
-
-        await group.save();
-
-        return group.toJSON();
+        return updatedGroup;
     }
-    static async patchName(groupId: string, name: any): Promise<Group> {
-        const group = await GroupMongoose.model.findById(
-            groupId
-        );
-
-        group.name = name;
-
-        await group.save();
-
-        return group.toJSON();
+    static async updateName(id: string, name: any): Promise<Group> {
+        const group = await GroupMongoose.model.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    name
+                }
+            },
+            {
+                new: true
+            }
+        )
+        .populate('owner', '_id username')
+        .lean();
+        return group;
     }
-    static async findById(groupId: string, lean: boolean = false): Promise<Group> {
+    static async findById(groupId: string): Promise<Group> {
         const group = await GroupMongoose.model.findById(
             groupId
-        );
-
-        if (group && lean)
-            return group.toJSON();
+        )
+        .populate('owner', '_id username')
+        .lean();
         
         return group;
     }
-    static async addMember(groupId: string): Promise<Group> {
-        const group = await GroupMongoose.model.findById(
-            groupId
-        );
-        group.userCount++;
-        await group.save();
+    static async addMember(id: string): Promise<Group> {
+        const group = await GroupMongoose.model.findByIdAndUpdate(
+            id,
+            {
+                $inc: {
+                    userCount: 1
+                }
+            },
+            {
+                new: true
+            }
+        ).lean();
 
-        return group.toJSON();
+        return group;
     }
-    static async removeMember(groupId: string): Promise<Group> {
-        const group = await GroupMongoose.model.findById(
-            groupId
-        );
-        group.userCount--;
-        await group.save();
+    static async removeMember(id: string): Promise<Group> {
+        const group = await GroupMongoose.model.findByIdAndUpdate(
+            id,
+            {
+                $inc: {
+                    userCount: -1
+                }
+            },
+            {
+                new: true
+            }
 
-        return group.toJSON();
+        ).lean();
+
+        return group;
+
     }
 
-    static async createOne(group: Group, lean: boolean = false): Promise<Group> {
-        const createdGroup = await GroupMongoose.model.create(group);
-        createdGroup.userCount++;
+    static async createOne(group: Group): Promise<Group> {
+        const createdGroup = new GroupMongoose.model(group);
+        createdGroup.userCount = 1;
         await createdGroup.save();
 
         return createdGroup.toJSON();
     }
 
-    static async findByName(name: string, lean: boolean = false): Promise<Group> {
+    static async findByName(name: string): Promise<Group> {
         const group = await GroupMongoose.model.findOne(
             {
                 name
             }
-        );
+        )
+        .lean();
 
-        if (group && lean)
-            return group.toJSON();
-        
         return group;
     }
 }

@@ -3,6 +3,7 @@ import Joi, { ObjectSchema } from "joi";
 import { Types } from "mongoose";
 import { HttpStatus } from "../common/constants/HttpStatus.enum";
 import { ValidationSource } from "../common/enums/ValidationSource.enum";
+import { HttpError } from "../common/responses/HttpError";
 import { HttpResponse } from "../common/responses/HttpResponse.factory";
 
 
@@ -26,37 +27,26 @@ class Validator {
 
     
     static validate(
-        joiSchema: ObjectSchema, 
-        source: ValidationSource = ValidationSource.BODY 
+        joiSchema: ObjectSchema,
+        objectToValidade: any
     ) {
-        return function (req: Request, res: Response, next: NextFunction) {
-            try {
-                const { error } = joiSchema.validate(
-                    req[source]
-                );
 
-                if(!error) 
-                    return next();
-                
-                const { details } = error;
+        const { error } = joiSchema.validate(
+            objectToValidade,
+            { abortEarly: false }
+        );
 
-                return HttpResponse.create(
-                    HttpStatus.badRequest,
-                    req,
-                    res,
-                    details.map(detail => detail.message)
-                )
-            } 
-            catch (error: any) {
-                return HttpResponse.create(
-                    HttpStatus.internalServerError,
-                    req,
-                    res,
-                    error.message
-                )
-            }
-        }
+        if(!error) 
+            return;
         
+        const { details } = error;
+
+        throw new HttpError(
+            HttpStatus.BADREQUEST,
+            details.map(
+                (error: any) => error.message
+            ).join(', ')
+        );
         
     }
 }

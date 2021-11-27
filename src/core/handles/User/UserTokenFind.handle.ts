@@ -18,8 +18,7 @@ class UserTokenFind {
                 );
             
             const user = await UserRepository.findOneById(
-                token.sub,
-                true
+                token.sub
             );
 
             if (!user)

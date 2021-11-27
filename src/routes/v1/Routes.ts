@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { AuthorizationRoute } from "./Authorization.route";
+import { CampaignRoute } from "./Campaign.route";
 import { GroupsRoute } from "./Groups.route";
 import { UsersRoute } from "./Users.route";
 
@@ -15,6 +16,11 @@ class Routes {
         router.use(
             "/Users", 
             UsersRoute.create()
+        );
+
+        router.use(
+            "/Campaigns", 
+            CampaignRoute.create()
         );
 
         router.use(

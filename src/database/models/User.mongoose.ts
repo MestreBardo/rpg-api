@@ -7,11 +7,11 @@ class UserMongoose {
   
   static schema = new Schema<User>({
     imageUrl: { type: String },
-    name: { type: String },
-    surname: { type: String },
-    email: { type: String },
+    name: { type: String, lowercase: true },
+    surname: { type: String, lowercase: true },
+    email: { type: String, lowercase: true },
     password: { type: String },
-    username: { type: String },
+    username: { type: String, lowercase: true },
     country: { type: String },
     city: { type: String },
     gender: { type: String },

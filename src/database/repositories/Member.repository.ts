@@ -1,8 +1,14 @@
-import { Group } from "../../common/entities/Group.entity";
 import { Member } from "../../common/entities/Member.entity";
 import { MemberMongoose } from "../models/Member.mongoose";
 
 class MemberRepository {
+    static async removeMemberById(id: any) {
+        await MemberMongoose.model.findByIdAndRemove(
+            {
+                id
+            }
+        );
+    }
     static async removeMember(user: string, group: string): Promise<void> {
         await MemberMongoose.model.findOneAndDelete(
             {
@@ -15,33 +21,89 @@ class MemberRepository {
         
     }
 
-    static async removeUser(memberId: string): Promise<void> {
+    static async findGroupsByUser(userId: string): Promise<Member[]> {
+        const members = await MemberMongoose.model.find(
+            {
+                user: userId
+            }
+        )
+        .populate(
+            {
+                path:"group",
+                select: "_id name description userCount"
+            }
+        )
+        .lean();
+
+        return members;
+    }
+
+    static async findByGroup(group: string, username: string, page: number = 1): Promise<Member[]> {
+        const members = await MemberMongoose.model.find(
+            {
+                group
+            }
+        )
+        .populate(
+            {
+                path:"user",
+                match: {
+                    username: new RegExp(username, "i")
+                },
+                select: "_id username name surname email"
+            }
+        )
+        .skip(
+            (page - 1) * 20
+        ).limit(
+            20
+        )
+        .lean();
+
+        return members;
+    }
+
+    static async removeUser(id: string): Promise<void> {
         await MemberMongoose.model.findByIdAndRemove(
-            memberId
+            id
         );
 
     }
 
-    static async demoteUser(memberId: string): Promise<Member> {
-        const member = await MemberMongoose.model.findById(
-            memberId
-        );
+    static async demoteUser(id: string): Promise<Member> {
+        const demotedUser = await MemberMongoose.model.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    role: "user"
+                }
+            },
+            {
+                new: true
+            }
+        )
+        .populate("user")
+        .lean();
 
-        member.role = "user";
-        await member.save();
-
-        return member.toJSON();
+        return demotedUser;
     }
 
-    static async promoveUser(memberId: string): Promise<Member> {
-        const member = await MemberMongoose.model.findById(
-            memberId
-        );
+    static async promoveUser(id: string): Promise<Member> {
+        const promovedUser = await MemberMongoose.model.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    role: "admin"
+                }
+            },
+            {
+                new: true
+            }
+        )
+        .populate("user")
+        .lean();
 
-        member.role = "admin";
-        await member.save();
-
-        return member.toJSON();
+        return promovedUser;
     }
 
     static async findUserByGroup(groupId: string, page: number): Promise<Member[]> {
@@ -66,36 +128,33 @@ class MemberRepository {
         return members;
     }
 
-    static async createOne(group: Member, lean: boolean = false): Promise<Member> {
-        const createdMember = await MemberMongoose.model.create(group);
+    static async createOne(group: Member): Promise<Member> {
+        const createdMember = new MemberMongoose.model(group);
         await createdMember.save();
 
         return createdMember.toJSON();
     }
     
 
-    static async findByUserOnCampaign(user: string, group: string, lean: boolean = false): Promise<Member> {
+    static async findByUserOnGroup(user: string, group: string): Promise<Member> {
         const member = await MemberMongoose.model.findOne(
             {
                 user,
                 group
             }
         )
+        .lean();
 
-        if (lean && member)
-            return member.toJSON();
 
         return member;
     }
 
 
-    static async findById(memberId: string, lean: boolean = false): Promise<Member> {
+    static async findById(id: string): Promise<Member> {
         const member = await MemberMongoose.model.findById(
-            memberId
-        );
-
-        if (lean && member)
-            return member.toJSON();
+            id
+        )
+        .lean();
 
         return member;
     }
