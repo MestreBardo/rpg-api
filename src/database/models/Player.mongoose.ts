@@ -8,7 +8,8 @@ class PlayerMongoose {
     user: { type: String, ref: 'User' },
     campaign: { type: String, ref: 'Campaign' },
     role: { type: String },
-    joinedAt: { type: Date, default: new Date() }
+    joinedAt: { type: Date, default: new Date() },
+    template: { type: {} },
 
 
   })

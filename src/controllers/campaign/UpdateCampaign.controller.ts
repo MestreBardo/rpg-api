@@ -12,6 +12,7 @@ class UpdateCampaignController {
             const updatedCampaign = await UpdateCampaignService.execute(user["_id"], campaign["id"], campaignUpdate);
             HttpSendService.execute(req, res, HttpStatus.OK, updatedCampaign);
         } catch (error) {
+            console.log(error);
             next(error);
         }
     }

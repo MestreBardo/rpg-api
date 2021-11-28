@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { CreateCampaignController } from '../../controllers/campaign/CreateCampaign.controller';
 import { RetrieveCampaignController } from '../../controllers/campaign/RetrieveCampaign.controller';
+import { SaveCampaignTemplateController } from '../../controllers/campaign/SaveCampaignTemplate.controller';
 import { UpdateCampaignController } from '../../controllers/campaign/UpdateCampaign.controller';
 import { UpdateCampaignNameController } from '../../controllers/campaign/UpdateCampaignName.controller';
 import { JwtVerificationMiddleware } from '../../core/handles/Jwt/JwtVerification.middleware';
@@ -26,6 +27,11 @@ class CampaignRoute {
         router.patch(
             "/:id/name",
             UpdateCampaignNameController.handle
+        );
+
+        router.patch(
+            "/:id/template",
+            SaveCampaignTemplateController.handle
         );
 
         router.put(
