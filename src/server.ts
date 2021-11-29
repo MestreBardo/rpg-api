@@ -1,8 +1,6 @@
 import { app } from "./app"
 import { Connector } from "./database/Connector.database"
 
-
-
 (async () =>{
     Connector
         .connect()

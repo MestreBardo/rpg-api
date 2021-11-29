@@ -106,6 +106,16 @@ class UserRepository {
         return user;
     }
 
+    static async findOneByIdRedux(id: string): Promise<User> {
+        const user = await UserMongoose.model.findById(
+            id
+        )
+        .select('_id username name surname email')
+        .lean();
+
+        return user;
+    }
+
     static async updateOneById(id: string, user: any): Promise<User> {
 
         Object.keys(user).forEach(

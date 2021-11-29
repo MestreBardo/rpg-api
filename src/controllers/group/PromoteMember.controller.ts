@@ -11,7 +11,7 @@ class PromoteMemberController {
     static async handle(req: RequestWithUser, res: Response, next: NextFunction) {
         try {
             const user = req.user;
-            const member = { id: req.params.id };
+            const member = { id: req.params["memberId"] };
             Validator.validate(MemberIdValidator.schema, member);
             const promotedMember = await PromoteMemberService.execute(user, member);
             HttpSendService.execute(req, res, HttpStatus.OK, promotedMember);

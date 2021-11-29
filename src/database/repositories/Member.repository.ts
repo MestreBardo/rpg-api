@@ -88,8 +88,8 @@ class MemberRepository {
         return demotedUser;
     }
 
-    static async promoveUser(id: string): Promise<Member> {
-        const promovedUser = await MemberMongoose.model.findByIdAndUpdate(
+    static async promoteUser(id: string): Promise<Member> {
+        const promotedUser = await MemberMongoose.model.findByIdAndUpdate(
             id,
             {
                 $set: {
@@ -103,7 +103,7 @@ class MemberRepository {
         .populate("user")
         .lean();
 
-        return promovedUser;
+        return promotedUser;
     }
 
     static async findUserByGroup(groupId: string, page: number): Promise<Member[]> {
