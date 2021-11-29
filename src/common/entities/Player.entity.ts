@@ -3,6 +3,7 @@ class Player {
     campaign: string;
     role: string;
     joinedAt: Date;
+    template: any;
 
 }
 

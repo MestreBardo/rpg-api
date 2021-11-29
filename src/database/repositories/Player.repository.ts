@@ -32,6 +32,19 @@ class PlayerRepository {
 
     }
 
+    static async updateTemplate(campaignId: string, template: any): Promise<void> {
+        await PlayerMongoose.model.updateMany(
+            {
+                campaign: campaignId,
+            },
+            {
+                $set: {
+                    template
+                }
+            }
+        );
+    }
+
     static async findUserGroupActiveCampaigns(userId: string, groupId: string): Promise<any[]> {
         const groups = await PlayerMongoose.model.find(
             {
