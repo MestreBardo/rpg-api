@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AuthorizationRoute } from "./Authorization.route";
 import { CampaignRoute } from "./Campaign.route";
 import { GroupsRoute } from "./Groups.route";
+import { SessionRoute } from "./Session.route";
 import { UsersRoute } from "./Users.route";
 
 class Routes {
@@ -26,6 +27,11 @@ class Routes {
         router.use(
             "/Groups", 
             GroupsRoute.create()
+        );
+
+        router.use(
+            "/Sessions", 
+            SessionRoute.create()
         );
         
         return router;

@@ -11,12 +11,14 @@ class JoinGroupService {
         await VerifyUserGroupDuplicityService.execute(user["_id"], group["_id"] || group["id"]);
         const member = GenerateMemberService.execute({user: user["_id"], group: group["_id"] || group["id"], role: "user"});
         const createdMember = await MemberRepository.createOne(member);
+        const userRedux = await UserRepository.findOneByIdRedux(user["_id"]);
         const updatedGroup = await GroupRepository.addMember(group["_id"] || group["id"]);
         await UserRepository.addGroup(user["_id"]);
 
         return {
             ...updatedGroup,
-            me: createdMember
+            me: createdMember,
+            newMember: {...createdMember, user: userRedux}
         };
 
 
