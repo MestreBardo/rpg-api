@@ -18,6 +18,21 @@ class PlayerRepository {
 
 
         
+
+        
+    }
+
+    static async findByCampaign(campaign: string): Promise<any[]> {
+        const players = await PlayerMongoose.model.find(
+            {
+                campaign
+            }
+        )
+        .populate('user', "_id username")
+        .lean();
+
+        return players;
+
     }
 
     static async findByUser(user: string): Promise<Player> {

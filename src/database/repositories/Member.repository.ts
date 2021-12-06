@@ -106,6 +106,18 @@ class MemberRepository {
         return promotedUser;
     }
 
+    static async findAllUsers(group: string): Promise<any[]> {
+        const members = await MemberMongoose.model.find(
+            {
+                group
+            }
+        )
+        .populate("user", "_id username")
+        .lean();
+
+        return members;
+    }
+
     static async findUserByGroup(groupId: string, page: number): Promise<Member[]> {
         const members = await MemberMongoose.model.find(
             {

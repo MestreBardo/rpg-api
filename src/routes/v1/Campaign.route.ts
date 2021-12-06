@@ -6,6 +6,9 @@ import { RetrieveCampaignSessionsController } from '../../controllers/campaign/R
 import { UpdateCampaignController } from '../../controllers/campaign/UpdateCampaign.controller';
 import { UpdateCampaignNameController } from '../../controllers/campaign/UpdateCampaignName.controller';
 import { JwtVerificationMiddleware } from '../../core/handles/Jwt/JwtVerification.middleware';
+import { RetrieveUsersToAddController } from '../../controllers/campaign/RetrieveUsersToAdd.controller';
+import { AddCampaignPlayerController } from '../../controllers/campaign/AddCampaignPlayer.controller';
+import { RetrieveCampaignPlayersController } from '../../controllers/campaign/RetrieveCampaignPlayers.controller';
 
 
 class CampaignRoute {
@@ -26,8 +29,23 @@ class CampaignRoute {
         )
 
         router.get(
+            "/:id/players",
+            RetrieveCampaignPlayersController.handle
+        )
+
+        router.get(
+            "/:id/verify",
+            RetrieveUsersToAddController.handle
+        )
+
+        router.get(
             "/:id/sessions",
             RetrieveCampaignSessionsController.handle
+        );
+
+        router.post(
+            "/:id/player",
+            AddCampaignPlayerController.handle
         );
 
         router.patch(
