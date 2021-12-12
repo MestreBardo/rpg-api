@@ -4,9 +4,7 @@ import { MemberMongoose } from "../models/Member.mongoose";
 class MemberRepository {
     static async removeMemberById(id: any) {
         await MemberMongoose.model.findByIdAndRemove(
-            {
-                id
-            }
+            id
         );
     }
     static async removeMember(user: string, group: string): Promise<void> {

@@ -4,6 +4,7 @@ import { DemoteMemberController } from '../../controllers/group/DemoteMember.con
 import { JoinGroupSignedUserController } from '../../controllers/group/JoinGroupSignedUser.controller';
 import { LeaveGroupSignedUserController } from '../../controllers/group/LeaveGroupSignedUser.controller';
 import { PromoteMemberController } from '../../controllers/group/PromoteMember.controller';
+import { RemoveGroupUserController } from '../../controllers/group/RemoveGroupUser.controller';
 import { RetrieveGroupController } from '../../controllers/group/RetrieveGroup.controller';
 import { RetrieveGroupCampaignsController } from '../../controllers/group/RetrieveGroupCampaigns.controller';
 import { RetrieveGroupMembersController } from '../../controllers/group/RetrieveGroupMembers.controller';
@@ -64,11 +65,10 @@ class GroupsRoute {
             LeaveGroupSignedUserController.handle
         );
 
-        //Remove member group
-        // router.delete(
-        //     "/:groupId/remove/:memberId",
-        //     Rem.handle
-        // );
+        router.delete(
+            "/:id/member/:memberId",
+            RemoveGroupUserController.handle
+        );
 
         //Promote member group
         router.patch(

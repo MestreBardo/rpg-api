@@ -22,6 +22,54 @@ class PlayerRepository {
         
     }
 
+    static async removePlayerGroupCampaigns(user: string, group: string): Promise<void> {
+        await PlayerMongoose.model.deleteMany(
+            {
+                user,
+                group
+            }
+        );
+    }
+
+    static async updateCharacter(id: string, template: any): Promise<void> { 
+        await PlayerMongoose.model.updateOne(
+            {
+                _id: id
+            },
+            {
+                $set: {
+                    template
+                }
+            }
+        );
+    } 
+
+    static async findCampaignsByUser(userId: string): Promise<Player[]> {
+        const members = await PlayerMongoose.model.find(
+            {
+                user: userId
+            }
+        )
+        .populate(
+            {
+                path:"campaign",
+                select: "_id name description"
+            }
+        )
+        .lean();
+
+        return members;
+    }
+
+    static async findById(id: string): Promise<Player> {
+        const player = await PlayerMongoose.model.findById(id).lean();
+        return player;
+    }
+
+    static async removePlayerById(id: string): Promise<void> {
+        await PlayerMongoose.model.findByIdAndRemove(id);
+    }
+
     static async findByCampaign(campaign: string): Promise<any[]> {
         const players = await PlayerMongoose.model.find(
             {
@@ -102,6 +150,18 @@ class PlayerRepository {
 
     static async createOne(player: any): Promise<Player> {
         const createdPlayer = new PlayerMongoose.model(player);
+        await createdPlayer.save();
+
+        return createdPlayer.toJSON();
+    }
+
+    static async addPlayer(userId: string, campaignId: string, template: string): Promise<Player> {
+        const createdPlayer = new PlayerMongoose.model({
+            user: userId,
+            campaign: campaignId,
+            template,
+            role: "player"
+        });
         await createdPlayer.save();
 
         return createdPlayer.toJSON();

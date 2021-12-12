@@ -12,6 +12,10 @@ class SessionRepository {
 
         return campaign.toJSON();
     }
+    
+    static async removeById(session: string): Promise<void> { 
+        await SessionMongoose.model.findByIdAndDelete(session);
+    }
 
     static async findByDate(date: Date, campaignId: string): Promise<any> { 
         const session = await SessionMongoose.model.findOne({

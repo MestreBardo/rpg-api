@@ -4,6 +4,7 @@ import { RetrieveCampaignController } from '../../controllers/campaign/RetrieveC
 import { UpdateCampaignController } from '../../controllers/campaign/UpdateCampaign.controller';
 import { UpdateCampaignNameController } from '../../controllers/campaign/UpdateCampaignName.controller';
 import { JwtVerificationMiddleware } from '../../core/handles/Jwt/JwtVerification.middleware';
+import { RemoveSessionController } from '../../controllers/session/RemoveSession.controller';
 
 
 
@@ -19,10 +20,10 @@ class SessionRoute {
             CreateSessionController.handle
         );
 
-        // router.get(
-        //     "/:id",
-        //     RetrieveCampaignController.handle
-        // )
+        router.delete(
+            "/:id",
+            RemoveSessionController.handle
+        )
 
         // router.patch(
         //     "/:id/name",

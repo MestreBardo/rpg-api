@@ -10,6 +10,7 @@ class LeaveGroupSignedUserController {
     static async handle(req: RequestWithUser, res: Response, next: NextFunction){
         try {
             const user = req.user;
+            console.log(user);
             const group = {id: req.params["groupId"]};
             Validator.validate(GroupIdValidator.schema, group);
             const groupLeaved = await LeaveGroupService.execute(user, group);
